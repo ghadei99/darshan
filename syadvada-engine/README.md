@@ -9,6 +9,8 @@ Dark, meditative UI with amber accents. OpenAI integration optional; heuristic f
 
 > **Note:** The folder is still named `syadvada-engine/` for git history. The unified app package name is `darshana-suite`.
 
+Production deploys automatically from `main` on [GitHub](https://github.com/ghadei99/darshan) via Vercel → https://darshana-suite.vercel.app
+
 ## Quick Start
 
 ```bash
