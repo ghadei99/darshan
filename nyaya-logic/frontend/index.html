@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nyāya-Logic — Classical Syllogistic Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            serif: ['"Source Serif 4"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            slate: { 950: '#0a0f1a' },
+            gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+          },
+          animation: {
+            'yantra-spin': 'yantra-spin 2.4s linear infinite',
+            'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+          },
+          keyframes: {
+            'yantra-spin': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' },
+            },
+            'pulse-glow': {
+              '0%, 100%': { opacity: '0.4' },
+              '50%': { opacity: '0.8' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      background: radial-gradient(ellipse at 20% 0%, #1a1520 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 100%, #0f1a2e 0%, transparent 50%),
+                  #0a0f1a;
+    }
+    .yantra {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #f59e0b;
+      border-radius: 50%;
+      position: relative;
+    }
+    .yantra::before,
+    .yantra::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1.5px solid #fbbf24;
+      border-radius: 50%;
+    }
+    .yantra::after {
+      inset: 12px;
+      border-style: dashed;
+      opacity: 0.7;
+    }
+    .yantra-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .yantra-inner::before {
+      content: '☸';
+      color: #f59e0b;
+      font-size: 14px;
+    }
+    .card-glow {
+      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.1),
+                  0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+    .mandala-bg {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body class="h-full min-h-screen text-slate-200 font-serif antialiased">
+  <div class="mandala-bg min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-amber-900/30 bg-slate-950/60 backdrop-blur-sm">
+      <div class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div>
+          <h1 class="font-display text-2xl md:text-3xl font-bold tracking-wide text-amber-400">
+            Nyāya-Logic
+          </h1>
+          <p class="text-sm text-slate-400 mt-1 font-mono">
+            pañcāvayava · five-membered syllogism
+          </p>
+        </div>
+        <div class="hidden md:block text-right text-xs text-slate-500 font-mono">
+          <div>प्रतिज्ञा · हेतु · उदाहरण</div>
+          <div>उपनय · निगमन</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-10 space-y-8">
+      <!-- Input Section -->
+      <section class="card-glow rounded-xl bg-slate-900/70 border border-amber-900/20 p-6 md:p-8">
+        <label for="argument" class="block font-display text-lg text-amber-300 mb-3">
+          Present Your Argument
+        </label>
+        <p class="text-sm text-slate-400 mb-4">
+          Enter a political speech, philosophical claim, or essay passage. The sages will decompose it through classical Nyāya epistemology.
+        </p>
+        <textarea
+          id="argument"
+          rows="8"
+          placeholder="e.g. Democracy is essential for human flourishing, because it allows citizens to participate in governance. For example, nations with free elections tend to have higher civic trust. Therefore, democratic institutions should be strengthened."
+          class="w-full rounded-lg bg-slate-950/80 border border-slate-700/50 px-4 py-3 font-mono text-sm text-slate-200 placeholder-slate-600 resize-y min-h-[180px]"
+        ></textarea>
+
+        <div class="mt-6 flex items-center gap-4">
+          <button
+            id="submit-btn"
+            type="button"
+            class="group relative inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-display font-semibold tracking-wide transition-all duration-300 shadow-lg shadow-amber-900/30 hover:shadow-amber-800/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span id="btn-text">Consult the Nyāya Sages</span>
+            <span id="btn-spinner" class="hidden">
+              <span class="yantra animate-yantra-spin inline-block">
+                <span class="yantra-inner"></span>
+              </span>
+            </span>
+          </button>
+          <span id="analyzer-badge" class="hidden text-xs font-mono text-slate-500"></span>
+        </div>
+      </section>
+
+      <!-- Error -->
+      <div id="error" class="hidden rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-3 text-red-300 text-sm font-mono"></div>
+
+      <!-- Results -->
+      <section id="results" class="hidden space-y-6">
+        <!-- Validity -->
+        <div id="validity-card" class="card-glow rounded-xl bg-slate-900/70 border border-amber-900/20 p-6 text-center">
+          <p class="text-xs font-mono text-slate-500 uppercase tracking-widest mb-2">Syllogistic Validity</p>
+          <p id="validity" class="font-display text-3xl font-bold"></p>
+        </div>
+
+        <!-- Five Steps -->
+        <div>
+          <h2 class="font-display text-xl text-amber-300 mb-4">The Five Avayavas</h2>
+          <div id="steps-grid" class="grid gap-4 md:grid-cols-2"></div>
+        </div>
+
+        <!-- Fallacies -->
+        <div id="fallacies-section" class="card-glow rounded-xl bg-slate-900/70 border border-red-900/20 p-6">
+          <h2 class="font-display text-lg text-red-400 mb-3">Detected Fallacies (Hetvābhāsa)</h2>
+          <ul id="fallacies-list" class="space-y-2"></ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="max-w-5xl mx-auto px-6 py-8 text-center text-xs text-slate-600 font-mono">
+      Nyāya-Logic · Classical Indian epistemology meets modern discourse
+    </footer>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.includes('5500') || window.location.protocol === 'file:'
+      ? 'http://localhost:8000'
+      : window.location.origin;
+
+    const STEPS = [
+      { key: 'pratijna', label: 'Pratijñā', sub: 'Thesis', color: 'amber' },
+      { key: 'hetu', label: 'Hetu', sub: 'Reason', color: 'yellow' },
+      { key: 'udaharana', label: 'Udāharaṇa', sub: 'Example', color: 'orange' },
+      { key: 'upanaya', label: 'Upanaya', sub: 'Application', color: 'amber' },
+      { key: 'nigamana', label: 'Nigamana', sub: 'Conclusion', color: 'gold' },
+    ];
+
+    const validityColors = {
+      valid: 'text-emerald-400',
+      'partially valid': 'text-amber-400',
+      invalid: 'text-red-400',
+    };
+
+    const btn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+    const textarea = document.getElementById('argument');
+    const results = document.getElementById('results');
+    const errorEl = document.getElementById('error');
+    const analyzerBadge = document.getElementById('analyzer-badge');
+
+    function setLoading(loading) {
+      btn.disabled = loading;
+      btnText.classList.toggle('hidden', loading);
+      btnSpinner.classList.toggle('hidden', !loading);
+    }
+
+    function renderSteps(steps) {
+      const grid = document.getElementById('steps-grid');
+      grid.innerHTML = STEPS.map((s, i) => `
+        <div class="card-glow rounded-lg bg-slate-950/60 border border-amber-900/15 p-5 ${i === 4 ? 'md:col-span-2' : ''}">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-block px-2 py-0.5 rounded text-xs font-mono font-medium bg-amber-900/40 text-amber-300 border border-amber-700/30">
+              ${s.label}
+            </span>
+            <span class="text-xs text-slate-500 font-mono">${s.sub}</span>
+          </div>
+          <p class="text-sm text-slate-300 leading-relaxed">${escapeHtml(steps[s.key] || '—')}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderFallacies(fallacies) {
+      const section = document.getElementById('fallacies-section');
+      const list = document.getElementById('fallacies-list');
+      if (!fallacies || fallacies.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+      section.classList.remove('hidden');
+      list.innerHTML = fallacies.map(f => `
+        <li class="flex items-start gap-2">
+          <span class="mt-1 w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+          <span class="inline-block px-2 py-1 rounded text-xs font-mono bg-red-950/50 text-red-300 border border-red-800/30">${escapeHtml(f)}</span>
+        </li>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function analyze() {
+      const argument = textarea.value.trim();
+      if (!argument) {
+        errorEl.textContent = 'Please enter an argument to analyze.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      errorEl.classList.add('hidden');
+      setLoading(true);
+
+      try {
+        const res = await fetch(`${API_BASE}/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ argument }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `Server error (${res.status})`);
+        }
+
+        const data = await res.json();
+
+        const validityEl = document.getElementById('validity');
+        const v = (data.validity || 'unknown').toLowerCase();
+        validityEl.textContent = data.validity;
+        validityEl.className = `font-display text-3xl font-bold ${validityColors[v] || 'text-slate-300'}`;
+
+        renderSteps(data.steps);
+        renderFallacies(data.fallacies);
+
+        analyzerBadge.textContent = `via ${data.analyzer || 'unknown'}`;
+        analyzerBadge.classList.remove('hidden');
+
+        results.classList.remove('hidden');
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        errorEl.textContent = err.message || 'Failed to reach the Nyāya sages. Is the backend running on port 8000?';
+        errorEl.classList.remove('hidden');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    btn.addEventListener('click', analyze);
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) analyze();
+    });
+  </script>
+</body>
+</html>
