@@ -49,10 +49,16 @@ cp .env.example .env.local
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `GEMINI_API_KEY` | No | Enables Gemini-powered analysis across all modules |
-| `GEMINI_MODEL` | No | Model name (default: `gemini-2.5-flash`) |
+| `GEMINI_API_KEY` | **No** (but recommended) | **The only env var you need.** Enables Gemini AI across all modules. Without it, heuristic fallbacks run locally in TypeScript. |
 
-Without an API key, both modules use **heuristic analyzers** with pattern matching and template reframing.
+### Vercel (production) — one variable
+
+1. Open [darshana-suite → Settings → Environment Variables](https://vercel.com/ghadei99s-projects/darshana-suite/settings/environment-variables)
+2. Add **`GEMINI_API_KEY`** with your key from [Google AI Studio](https://aistudio.google.com/apikey)
+3. Apply to **Production** (and Preview if you want)
+4. **Redeploy** — env changes only apply to new deployments (Deployments → ⋯ → Redeploy)
+
+That's it. No other API keys or config required. Model defaults to `gemini-2.5-flash`.
 
 ## API
 

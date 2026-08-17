@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { analyzerStatusLabel } from "@/lib/analyzer-status";
 import type { PramanaAnalyzeResponse, PramanaId } from "@/lib/pramana/types";
 import { PRAMANA_META } from "@/lib/pramana/types";
 
@@ -181,9 +182,7 @@ export function PramanaExplorer() {
 
         <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-xs text-subtle">
-            {result
-              ? `Analyzed via ${result.analyzer}`
-              : "Works without API key — heuristic fallback enabled"}
+            {analyzerStatusLabel(result?.analyzer)}
           </p>
           <button
             type="button"

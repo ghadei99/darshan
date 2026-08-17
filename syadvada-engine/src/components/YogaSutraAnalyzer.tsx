@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { analyzerStatusLabel } from "@/lib/analyzer-status";
 import type { YogaAnalyzeResponse } from "@/lib/yoga/types";
 import {
   KLESHA_META,
@@ -175,9 +176,7 @@ export function YogaSutraAnalyzer() {
 
         <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-xs text-subtle">
-            {result
-              ? `Analyzed via ${result.analyzer}`
-              : "Works without API key — heuristic fallback enabled"}
+            {analyzerStatusLabel(result?.analyzer)}
           </p>
           <button
             type="button"
