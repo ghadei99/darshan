@@ -1,23 +1,23 @@
 import OpenAI from "openai";
 
+import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { NyayaAnalyzeResponse, NyayaSteps } from "./types";
 
-const NYAYA_SYSTEM_PROMPT = `You are a scholar of classical Indian Nyāya epistemology.
-Analyze the given argument through the five-membered syllogism (pañcāvayava):
+const NYAYA_SYSTEM_PROMPT = `${JSON_VOICE_NOTE}
 
-1. Pratijñā (thesis) — the proposition to be proved
-2. Hetu (reason) — the logical ground connecting subject and predicate
-3. Udāharaṇa (example) — a known instance illustrating the invariable concomitance (vyāpti)
-4. Upanaya (application) — applying the example to the subject under discussion
-5. Nigamana (conclusion) — the reaffirmed thesis
+You're dissecting an argument Nyāya-style — like a philosophical detective walking through a five-step syllogism. Make it click for a smart friend, not a dissertation committee.
 
-Also detect logical fallacies (hetvābhāsa / informal fallacies) such as:
-sadhyasama (the unproved), asiddha (the unestablished), anaikāntika (inconclusive reason),
-vyabhicāra (deviating), kālātīta (mistimed), ad hominem, straw man, false dichotomy,
-hasty generalization, circular reasoning, appeal to authority, slippery slope, etc.
+Map the argument to pañcāvayava (five members):
+1. Pratijñā (thesis) — what's being claimed
+2. Hetu (reason) — the logical bridge
+3. Udāharaṇa (example) — "like when you see smoke and know fire"
+4. Upanaya (application) — plugging the example into this case
+5. Nigamana (conclusion) — the payoff
 
-Respond ONLY with valid JSON matching this schema:
+Also flag fallacies (hetvābhāsa): hasty generalization, false dichotomy, ad hominem, circular reasoning, appeal to authority, straw man, slippery slope, etc. Name them in plain English with a punchy one-liner each.
+
+Respond ONLY with valid JSON:
 {
   "validity": "valid" | "partially valid" | "invalid",
   "steps": {
@@ -30,8 +30,7 @@ Respond ONLY with valid JSON matching this schema:
   "fallacies": ["...", ...]
 }
 
-Extract or reconstruct each step from the argument. If a step is implicit, state what is implied.
-Be precise and scholarly but accessible. Use Sanskrit terms only in fallacy names where appropriate.`;
+Extract or reconstruct each step. If implicit, say what you'd infer — conversationally.`;
 
 async function openaiAnalyze(argument: string): Promise<NyayaAnalyzeResponse> {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

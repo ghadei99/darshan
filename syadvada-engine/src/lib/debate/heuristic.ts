@@ -1,4 +1,4 @@
-import { CARVAKA_OPENAI_PERSONA, generateCarvakaReply } from "./carvaka";
+import { generateCarvakaReply } from "./carvaka";
 import type {
   DebateConcludeResponse,
   DebateMessage,
@@ -21,29 +21,23 @@ function excerpt(text: string, max = 60): string {
 
 const ADVAITA_REPLIES = [
   (arg: string) =>
-    `You assert "${excerpt(arg)}" — yet this presupposes a duality between knower and known that Advaita dissolves. Brahman alone is real; the universe (jagat) is māyā, an apparent modification of consciousness. The brain you invoke is itself an object within awareness, not the ground of awareness.`,
+    `Think about it like this: "${excerpt(arg)}" assumes there's a "you" over here and a world over there. Advaita says that's the mirage. Brahman alone is real — consciousness isn't brain static, it's the screen the whole movie plays on. So before we debate your thesis… who is the one debating?`,
   (arg: string) =>
-    `Neti neti — not this, not that. Your claim "${excerpt(arg)}" clings to vyavahārika (empirical) truth while ignoring pāramārthika (ultimate) truth. When the veil of ignorance (avidyā) lifts, the Self (Ātman) is seen as identical with Brahman. Matter is not the sole reality; consciousness is not a byproduct but the very substratum.`,
-  (arg: string) =>
-    `The Māṇḍūkya Upaniṣad teaches: turīya — the fourth state — transcends waking, dreaming, and deep sleep. Your argument "${excerpt(arg)}" operates entirely within the first three. Until you inquire "Who am I?" (koham), you debate shadows on the cave wall.`,
+    `Neti neti — not this, not that. "${excerpt(arg)}" is vyavahārika (everyday) talk, fine for groceries, useless for ultimate truth. The separate ego you're defending? Māyā. A rope mistaken for a snake. Care to look again before you grip it tighter?`,
 ];
 
 const NYAYA_REPLIES = [
   (arg: string) =>
-    `Let us formalize your thesis. You state "${excerpt(arg)}" — but where is the hetu (reason)? A Nyāya syllogism requires five avayavas: pratijñā, hetu, udāharaṇa, upanaya, nigamana. Your argument lacks a vyāpti (invariable concomitance). Without it, the inference is a hetvābhāsa — a fallacious reason.`,
+    `Okay, slow down. You said "${excerpt(arg)}" — but where's your hetu? The reason that *actually* connects your claim to your conclusion? A Nyāya syllogism needs five steps, not vibes. Give me the middle term, or admit this is assertion, not inference. What's the vyāpti here — the "whenever X, always Y" link?`,
   (arg: string) =>
-    `The Nyāya-sūtra demands logical proof (tarka), not mere assertion. "${excerpt(arg)}" — is your middle term (pakṣadharmatā) established? Does it reside in the subject? Is it present in the sapakṣa and absent in the vipakṣa? Until these conditions are met, your claim remains an unproven pratijñā.`,
-  (arg: string) =>
-    `You dismiss śabda too hastily. Nyāya accepts four pramāṇas: pratyakṣa, anumāna, upamāna, and śabda from āpta (reliable authority). "${excerpt(arg)}" — if your rejection of scripture is itself unverified, you commit āhārya (the fallacy of the impossible). Prove your standard of proof without circularity.`,
+    `Here's what I'm hearing: "${excerpt(arg)}." Detective mode: is your reason present in the subject? In similar cases? Absent in counterexamples? If not, that's hetvābhāsa — a fallacy in a scholar's robe. So which condition fails first?`,
 ];
 
 const MADHYAMIKA_REPLIES = [
   (arg: string) =>
-    `You claim "${excerpt(arg)}" — but on what ground? Mādhyamika shows all dharmas are śūnya (empty) of svabhāva (inherent existence). Your suffering, your attachment, your social reform — all arise dependently (pratītyasamutpāda). Neither absolute self-creation nor absolute externality withstands madhyamaka analysis.`,
+    `"${excerpt(arg)}" — here's the twist. You're gripping one side of the rope like it's solid. Mādhyamika says: everything's empty of fixed essence, including your thesis. Suffering, attachment, reform — all dependently arisen. So what happens to your argument when neither pole can stand alone?`,
   (arg: string) =>
-    `The Middle Way avoids eternalism and nihilism. "${excerpt(arg)}" — if suffering is entirely self-created, who is this "self"? If reform is useless, who suffers its absence? Nāgārjuna's catuṣkoṭi rejects all four extremes. Your thesis is a prapañca — conceptual proliferation — that collapses under prasāṅga (reductio).`,
-  (arg: string) =>
-    `Attachment (upādāna) indeed fuels dukkha — the Buddha taught this. Yet "${excerpt(arg)}" erects a false dichotomy. Social conditions and mental formations co-arise; neither is independent. Clinging to either pole as absolute is avidyā. Release both, and the debate itself loses its sharp edges.`,
+    `Look, I hear you on "${excerpt(arg)}." But who's suffering? What's being reformed? The Middle Way won't let you smuggle in a permanent "self" through the back door. Your view collapses if I push — but so does the opposite. Ready to loosen your grip, or still clinging?`,
 ];
 
 const REPLY_BANK: Record<Exclude<DebateSchool, "carvaka">, ((arg: string) => string)[]> = {

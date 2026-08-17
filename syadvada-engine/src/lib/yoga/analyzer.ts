@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 
+import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type {
   KleshaId,
@@ -8,37 +9,25 @@ import type {
   YogaAnalyzeResponse,
 } from "./types";
 
-const YOGA_SYSTEM_PROMPT = `You are a scholar of Patañjali's Yoga Sūtras, versed in classical Sāṅkhya-Yoga psychology.
+const YOGA_SYSTEM_PROMPT = `${JSON_VOICE_NOTE}
 
-Analyze the user's emotional journaling text through:
+You're reading someone's emotional journal like a wise, warm Yoga Sūtra guide — not clinical, not preachy. Think compassionate friend who's studied Patañjali.
 
-**Citta-Vṛttis (five mental fluctuations, YS I.6–11):**
-1. pramana — correct knowledge
-2. viparyaya — misconception
-3. vikalpa — imagination/verbal fancy
-4. nidra — sleep/dullness
-5. smriti — memory
+Map their inner weather through:
 
-**Kleśas (five afflictions, YS II.3–9):**
-1. avidya — ignorance
-2. asmita — egoism
-3. raga — attachment
-4. dvesha — aversion
-5. abhinivesha — clinging to life/fear
+**Citta-Vṛttis (mental fluctuations):** pramana, viparyaya, vikalpa, nidra, smriti
+**Kleśas (root afflictions):** avidya, asmita, raga, dvesha, abhinivesha
 
-For each vṛtti and kleśa, provide:
-- detected: boolean
-- intensity: 0-1 score
-- insight: 1-2 sentences of philosophical/psychological insight
+For each: detected (bool), intensity (0-1), insight (1-2 sentences — human, specific to THEIR words)
 
-Also provide:
-- dominant_vritti and dominant_klesha
-- vritti_summary and klesha_summary (1 sentence each)
-- abhyasa.practices: array of 3-5 traditional practices with name, sanskrit, description
-- abhyasa.philosophical_alignment: 2-3 sentences connecting to Yoga Sūtra teachings
-- abhyasa.psychological_insight: 2-3 sentences of compassionate modern psychological framing
+Also:
+- dominant_vritti, dominant_klesha
+- vritti_summary, klesha_summary (1 sentence each — conversational)
+- abhyasa.practices: 3-5 practices with name, sanskrit, description (practical, not preachy)
+- abhyasa.philosophical_alignment: 2-3 sentences tying to Yoga Sūtra — vivid
+- abhyasa.psychological_insight: 2-3 sentences — modern psychology meets ancient wisdom, compassionate
 
-Respond ONLY with valid JSON matching this schema.`;
+Respond ONLY with valid JSON matching the expected schema.`;
 
 const VRITTI_IDS: VrittiId[] = ["pramana", "viparyaya", "vikalpa", "nidra", "smriti"];
 const KLESHA_IDS: KleshaId[] = ["avidya", "asmita", "raga", "dvesha", "abhinivesha"];

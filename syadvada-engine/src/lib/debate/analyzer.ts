@@ -1,6 +1,12 @@
 import OpenAI from "openai";
 
-import { CARVAKA_OPENAI_PERSONA } from "./carvaka";
+import { JSON_VOICE_NOTE } from "../prompts/voice";
+import {
+  ADVAITA_OPENAI_PERSONA,
+  CARVAKA_OPENAI_PERSONA,
+  MADHYAMIKA_OPENAI_PERSONA,
+  NYAYA_OPENAI_PERSONA,
+} from "./personas";
 import { heuristicConclude, heuristicReply } from "./heuristic";
 import type {
   DebateAction,
@@ -13,9 +19,9 @@ import { SCHOOL_META } from "./types";
 
 const SCHOOL_PERSONAS: Record<DebateSchool, string> = {
   carvaka: CARVAKA_OPENAI_PERSONA,
-  advaita: `You are an Advaita Vedāntin debater in the lineage of Śaṅkara. You speak with serene authority. You argue that Brahman alone is real, the world is māyā, and consciousness (cit) is the ultimate substratum — not a byproduct of matter. You employ neti neti (not this, not that), distinguish vyavahārika from pāramārthika truth, and cite Upaniṣadic insight. You refute dualism and materialism through non-dual analysis.`,
-  nyaya: `You are a Nyāya philosopher trained in the Nyāya-sūtra tradition of Gautama. You are rigorous, systematic, and precise. You demand formal five-membered syllogisms, test hetu for vyāpti, identify hetvābhāsa (fallacious reasons), and accept four pramāṇas. You engage in vāda (honest debate) to establish truth. You press for logical proof (tarka) and expose gaps in your opponent's inference.`,
-  madhyamika: `You are a Mādhyamika Buddhist philosopher in the tradition of Nāgārjuna. You speak with compassionate sharpness. You argue that all phenomena are śūnya (empty) of inherent existence, arise through pratītyasamutpāda (dependent origination), and that clinging to extremes causes suffering. You employ prasāṅga (reductio), the catuṣkoṭi (fourfold negation), and the Middle Way between eternalism and nihilism.`,
+  advaita: ADVAITA_OPENAI_PERSONA,
+  nyaya: NYAYA_OPENAI_PERSONA,
+  madhyamika: MADHYAMIKA_OPENAI_PERSONA,
 };
 
 function formatHistory(history: DebateMessage[]): string {
@@ -39,9 +45,9 @@ async function openaiReply(
         role: "system",
         content: `${SCHOOL_PERSONAS[school]}
 
-You are engaged in classical Indian formal debate (vāda-kathā). Respond in 3-5 sentences as a direct philosophical rejoinder to the challenger's latest argument. Stay in character. Use Sanskrit terms sparingly with brief glosses. Do not break character or mention being an AI.${
+Respond as a direct rejoinder to the challenger's LATEST statement in this vāda-kathā. Push back hard, poke holes, and end with a follow-up question. Do not break character. Never mention being an AI.${
           school === "carvaka"
-            ? "\n\nIf the challenger cites scripture, tradition, karma, soul, rebirth, or any unobserved entity: attack it immediately and demand sensory proof."
+            ? "\n\nIf they cite scripture, karma, soul, or rebirth: attack immediately — demand sensory proof with wit."
             : ""
         }`,
       },
@@ -50,8 +56,8 @@ You are engaged in classical Indian formal debate (vāda-kathā). Respond in 3-5
         content: `Debate transcript so far:\n\n${formatHistory(history)}\n\nRespond as the ${meta.label} opponent to the challenger's latest statement.`,
       },
     ],
-    temperature: 0.7,
-    max_tokens: 400,
+    temperature: 0.85,
+    max_tokens: 450,
   });
 
   const reply = response.choices[0].message.content?.trim() ?? "";
@@ -77,15 +83,19 @@ async function openaiConclude(
     messages: [
       {
         role: "system",
-        content: `You are a neutral scholar of classical Indian debate (vāda) summarizing a completed vāda-kathā between a challenger and a ${meta.label} philosopher.
+        content: `You're wrapping up a vāda-kathā like a philosophical podcaster doing the post-debate recap — lively, fair, human. Not a dry academic abstract.
+
+Summarize a debate between the challenger and a ${meta.label} philosopher.
+
+${JSON_VOICE_NOTE}
 
 Respond ONLY with valid JSON:
 {
-  "summary": "2-3 sentence overview of the debate",
-  "verdict": "2-3 sentences on the central unresolved tension or outcome",
+  "summary": "2-3 sentences — conversational overview of how the sparring went",
+  "verdict": "2-3 sentences — what's still unresolved, in plain vivid language",
   "key_points": ["point 1", "point 2", "point 3", "point 4"],
-  "strengths_user": "1-2 sentences on the challenger's argumentative strengths",
-  "strengths_opponent": "1-2 sentences on the ${meta.label} school's strengths in the exchange"
+  "strengths_user": "1-2 sentences on what the challenger did well — specific, not generic",
+  "strengths_opponent": "1-2 sentences on how ${meta.label} pressed their case — specific, not generic"
 }`,
       },
       {

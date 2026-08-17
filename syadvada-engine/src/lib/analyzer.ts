@@ -1,44 +1,41 @@
 import OpenAI from "openai";
 
+import { JSON_VOICE_NOTE } from "./prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import {
   AnalyzeResponse,
   PERSPECTIVE_IDS,
   PERSPECTIVE_META,
   type Perspective,
-  type PerspectiveId,
 } from "./types";
 
-const SYADVADA_SYSTEM_PROMPT = `You are a scholar of Jain epistemology and the doctrine of Syādvāda (conditional predication) and Saptabhaṅgī (seven-fold judgment).
+const SYADVADA_SYSTEM_PROMPT = `${JSON_VOICE_NOTE}
 
-Analyze the given statement through all seven conditional viewpoints (saptabhaṅgī):
+You're unpacking a polarizing claim through Jain Syādvāda — seven conditional viewpoints (Saptabhaṅgī). Think about it like holding a prism to a hot take: every angle reveals something true AND incomplete.
 
-1. syat-asti — In some respect, it is (affirmation from a valid standpoint)
-2. syat-nasti — In some respect, it is not (negation from another valid standpoint)
-3. syat-asti-nasti — In some respect, it is and is not (simultaneous affirmation and negation)
-4. syat-avaktavya — In some respect, it is indescribable (beyond linguistic capture)
+The seven modes:
+1. syat-asti — In some respect, it is
+2. syat-nasti — In some respect, it is not
+3. syat-asti-nasti — In some respect, it is and is not
+4. syat-avaktavya — In some respect, it is indescribable
 5. syat-asti-avaktavya — In some respect, it is and is indescribable
 6. syat-nasti-avaktavya — In some respect, it is not and is indescribable
 7. syat-asti-nasti-avaktavya — In some respect, it is, is not, and is indescribable
 
 For each perspective provide:
-- classical: A scholarly, meditative analysis from the Jain conditional-logic standpoint (2–4 sentences)
-- stakeholder: A modern reframing through stakeholder lenses (employees, customers, investors, regulators, communities, environment, future generations) (2–4 sentences)
+- classical: Jain conditional-logic take (2–4 sentences) — vivid, conversational, not textbook
+- stakeholder: Modern reframing through real stakeholder lenses (employees, customers, communities, etc.) (2–4 sentences)
 
-Respond ONLY with valid JSON matching this schema:
+Respond ONLY with valid JSON:
 {
   "perspectives": [
-    {
-      "id": "syat-asti",
-      "classical": "...",
-      "stakeholder": "..."
-    },
+    { "id": "syat-asti", "classical": "...", "stakeholder": "..." }
   ]
 }
 
 Include all seven ids exactly: syat-asti, syat-nasti, syat-asti-nasti, syat-avaktavya, syat-asti-avaktavya, syat-nasti-avaktavya, syat-asti-nasti-avaktavya.
 
-Be precise, non-polemical, and reveal multiplicity without relativism. Use Sanskrit terms only where they add clarity.`;
+Reveal multiplicity without wishy-washy relativism. Make the user feel the insight land.`;
 
 function normalizePerspectives(
   raw: Array<{ id?: string; classical?: string; stakeholder?: string }>,

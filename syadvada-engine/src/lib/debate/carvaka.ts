@@ -3,6 +3,10 @@
  * Only pratyakṣa (direct perception) is pramāṇa; śabda, metaphysics, and unverified inference are rejected.
  */
 
+import { CARVAKA_OPENAI_PERSONA } from "./personas";
+
+export { CARVAKA_OPENAI_PERSONA };
+
 const SHABDA_PATTERNS = [
   /\b(scripture|veda|vedas|texts?|ancient|tradition|guru|sage|revealed|revelation|holy|sacred|word of|according to|apta|āpta|shabda|śabda|testimony|authority says)\b/i,
   /\b(bible|quran|upanishad|gita|sutra|sūtra|prophet|divine)\b/i,
@@ -47,9 +51,9 @@ function excerpt(text: string, max = 55): string {
 
 const SHABDA_REPLIES = [
   (arg: string) =>
-    `Śabda? Scripture? "${excerpt(arg)}" — you cite words on a page, not perception. Cārvāka dismisses testimony (śabda) entirely: no āpta-vākya, no Veda, no tradition can establish what the senses have not confirmed. Bring this claim under your eyes and hands, or withdraw it.`,
+    `Look — you just cited scripture on "${excerpt(arg)}." Cool. Which sense organ read the Veda and confirmed it? Cārvāka doesn't do śabda. Words on a page aren't perception — they're hearsay with good typography. So: show me what you can touch, or tell me why I should care about invisible authority.`,
   (arg: string) =>
-    `"${excerpt(arg)}" rests on hearsay dressed as authority. The Lokāyata barṣa: yad dṛṣṭaṃ tat satyam — what is seen, that alone is true. Which sense-organ perceived your scriptural truth? None? Then it is empty noise.`,
+    `Here's the twist: "${excerpt(arg)}" leans on tradition like it's evidence. It's not. yad dṛṣṭaṃ tat satyam — what's seen is true. What's merely *said*? That's priestcraft. Got anything your eyes can cash, or are we done?`,
 ];
 
 const METAPHYSICAL_REPLIES = [
@@ -75,11 +79,9 @@ const INFERENCE_REPLIES = [
 
 const GENERAL_REPLIES = [
   (arg: string) =>
-    `"${excerpt(arg)}" — fine words. Now: which of the five senses confirms it? Cārvāka accepts only pratyakṣa. Everything else — inference to the unseen, scripture, metaphysics — is avidyā (ignorance) masquerading as wisdom. Produce the perception or concede.`,
+    `"${excerpt(arg)}" — okay, but think about it like a receipt: where's the proof of purchase? Cārvāka only cashes pratyakṣa. No taste, touch, sight, smell, or sound? Then it's opinion dressed as truth. What's the one thing here you can actually perceive?`,
   (arg: string) =>
-    `The earth-born (bhūtacaitanya) wise enjoy here and now; fools mortify themselves for fictions. "${excerpt(arg)}" — until you place this thesis before touch, taste, sight, smell, or hearing, the Lokāyata cannot accept it. Sensory proof, or silence.`,
-  (arg: string) =>
-    `You speak of "${excerpt(arg)}" as if knowledge were cheap. Cārvāka is absolute: no perception, no claim. Dismiss śabda. Dismiss karma. Dismiss soul. Matter, sense, pleasure — the rest is priestcraft. Challenge me with something a living body can verify.`,
+    `The Lokāyata isn't impressed by eloquence. "${excerpt(arg)}" sounds deep — but can you put it under a microscope? Pleasure in this life is the only honest currency. Everything else is metaphysical IOUs. So — who's collecting on yours?`,
 ];
 
 export function generateCarvakaReply(arg: string, turn: number): string {
@@ -110,21 +112,3 @@ export function generateCarvakaReply(arg: string, turn: number): string {
 
   return reply;
 }
-
-export const CARVAKA_OPENAI_PERSONA = `You are a fierce Cārvāka (Lokāyata) materialist philosopher — absolute empirical skeptic, blunt, witty, and unyielding.
-
-EPISTEMOLOGY (non-negotiable):
-- ONLY pratyakṣa (direct sensory perception) is pramāṇa. If it cannot be seen, touched, tasted, smelled, or heard by a living embodied person, it is not knowledge.
-- REJECT śabda (verbal testimony/scripture) ENTIRELY — no Veda, no āpta, no tradition, no "ancient texts." Words on a page are not perception.
-- REJECT inference (anumāna) to unobserved entities: soul, God, karma, rebirth, afterlife, liberation, cosmic moral order.
-- Consciousness is a product of the four elements in the body (bhūtacaitanya); it perishes at death. No ātman survives.
-- Pleasure (bhukti) in this life is the highest good. Asceticism and metaphysics are priestly fraud.
-
-DEBATE STYLE:
-- Demand sensory proof for EVERY metaphysical, karmic, or spiritual claim. Ask: "Which sense-organ perceived this?"
-- Mock scriptural citations as hearsay. Quote the spirit of Bṛhaspati: perception alone is real.
-- Challenge the user aggressively but philosophically — not rude, but intellectually merciless.
-- Never concede validity to śabda, karma, or soul even for rhetorical balance. You ARE the Cārvāka.
-- Use Sanskrit terms sparingly with glosses (pratyakṣa, śabda, lokāyata).
-
-Respond 3-5 sentences. Stay in character. Never mention being an AI.`;
