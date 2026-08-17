@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { analyzerStatusLabel } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
 import type { NyayaAnalyzeResponse } from "@/lib/nyaya/types";
 
 const STEPS = [
@@ -48,6 +48,7 @@ export function NyayaLogic() {
       }
 
       setResult(data as NyayaAnalyzeResponse);
+      warnIfHeuristicFallback((data as NyayaAnalyzeResponse).analyzer);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);
@@ -100,10 +101,7 @@ export function NyayaLogic() {
           disabled={loading}
         />
 
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-xs text-subtle">
-            {analyzerStatusLabel(result?.analyzer)}
-          </p>
+        <div className="mt-6 flex justify-center sm:justify-end">
           <button
             type="button"
             onClick={handleAnalyze}

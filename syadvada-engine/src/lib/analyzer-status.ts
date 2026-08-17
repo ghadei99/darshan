@@ -1,8 +1,5 @@
-export const GEMINI_ENV_VAR = "GEMINI_API_KEY";
-
-export function analyzerStatusLabel(analyzer?: string): string {
-  if (analyzer) {
-    return `Analyzed via ${analyzer}`;
+export function warnIfHeuristicFallback(analyzer?: string): void {
+  if (analyzer === "heuristic") {
+    console.warn("API Key missing: Running local heuristic fallback.");
   }
-  return `Set ${GEMINI_ENV_VAR} on Vercel to enable Gemini — heuristic fallback active without it`;
 }

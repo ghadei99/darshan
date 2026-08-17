@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { analyzerStatusLabel } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
 import type { AnalyzeResponse } from "@/lib/types";
 
 import { PerspectiveGrid } from "./PerspectiveGrid";
@@ -42,6 +42,7 @@ export function SyadvadaEngine() {
       }
 
       setResult(data as AnalyzeResponse);
+      warnIfHeuristicFallback((data as AnalyzeResponse).analyzer);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);
@@ -101,10 +102,7 @@ export function SyadvadaEngine() {
             className="w-full resize-none bg-transparent text-lg leading-relaxed text-foreground placeholder:text-subtle focus:outline-none"
             disabled={loading}
           />
-          <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-subtle">
-              {analyzerStatusLabel(result?.analyzer)}
-            </p>
+          <div className="mt-6 flex justify-center sm:justify-end">
             <button
               type="button"
               onClick={handleShatter}

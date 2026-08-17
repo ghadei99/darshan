@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { analyzerStatusLabel } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
 import type {
   DharmaAnalyzeResponse,
   OptionAnalysis,
@@ -127,6 +127,7 @@ export function DharmaDilemmaSolver() {
       if (!response.ok) throw new Error(data.error || "Analysis failed");
 
       setResult(data as DharmaAnalyzeResponse);
+      warnIfHeuristicFallback((data as DharmaAnalyzeResponse).analyzer);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);
@@ -266,10 +267,7 @@ export function DharmaDilemmaSolver() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-xs text-subtle">
-            {analyzerStatusLabel(result?.analyzer)}
-          </p>
+        <div className="mt-6 flex justify-center sm:justify-end">
           <button
             type="button"
             onClick={handleAnalyze}

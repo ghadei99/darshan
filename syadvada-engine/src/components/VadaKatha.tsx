@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
 import type {
   DebateConcludeResponse,
   DebateMessage,
@@ -83,6 +84,8 @@ export function VadaKatha() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Debate failed");
 
+      warnIfHeuristicFallback(data.analyzer);
+
       if (Array.isArray(data.history)) {
         setMessages(data.history);
       } else if (data.reply) {
@@ -118,6 +121,8 @@ export function VadaKatha() {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not conclude");
+
+      warnIfHeuristicFallback(data.analyzer);
 
       setSummary(data as DebateConcludeResponse);
     } catch (err) {

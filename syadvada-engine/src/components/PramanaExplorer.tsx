@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { analyzerStatusLabel } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
 import type { PramanaAnalyzeResponse, PramanaId } from "@/lib/pramana/types";
 import { PRAMANA_META } from "@/lib/pramana/types";
 
@@ -68,6 +68,7 @@ export function PramanaExplorer() {
       }
 
       setResult(data as PramanaAnalyzeResponse);
+      warnIfHeuristicFallback((data as PramanaAnalyzeResponse).analyzer);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);
@@ -180,10 +181,7 @@ export function PramanaExplorer() {
           disabled={loading}
         />
 
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-xs text-subtle">
-            {analyzerStatusLabel(result?.analyzer)}
-          </p>
+        <div className="mt-6 flex justify-center sm:justify-end">
           <button
             type="button"
             onClick={handleAnalyze}
