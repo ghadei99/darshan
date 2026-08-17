@@ -24,7 +24,7 @@ export interface DharmaAnalyzeResponse {
   dominant_tension: string;
   synthesis: string;
   recommendation: string;
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }
 
 export const PURUSHARTHA_META: Record<

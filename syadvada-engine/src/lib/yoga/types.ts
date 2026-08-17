@@ -37,7 +37,7 @@ export interface YogaAnalyzeResponse {
     philosophical_alignment: string;
     psychological_insight: string;
   };
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }
 
 export const VRITTI_META: Record<

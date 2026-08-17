@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Optional: copy `syadvada-engine/.env.example` → `.env.local` and set `OPENAI_API_KEY`.
+Open [http://localhost:3000](http://localhost:3000). Optional: copy `syadvada-engine/.env.example` → `.env.local` and set `GEMINI_API_KEY`.
 
 ---
 

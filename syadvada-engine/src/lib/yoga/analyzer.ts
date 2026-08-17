@@ -1,5 +1,4 @@
-import OpenAI from "openai";
-
+import { generateJson, getGeminiApiKey } from "../gemini/client";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type {
@@ -83,29 +82,17 @@ function normalizeResponse(
       psychological_insight:
         data.abhyasa?.psychological_insight ?? "Self-awareness is the first step.",
     },
-    analyzer: "openai",
+    analyzer: "gemini",
   };
 }
 
-async function openaiAnalyze(journal: string): Promise<YogaAnalyzeResponse> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-
-  const response = await client.chat.completions.create({
-    model,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: YOGA_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: `Analyze this emotional journal entry:\n\n${journal}`,
-      },
-    ],
+async function geminiAnalyze(journal: string): Promise<YogaAnalyzeResponse> {
+  const data = await generateJson<Partial<YogaAnalyzeResponse>>({
+    systemInstruction: YOGA_SYSTEM_PROMPT,
+    userPrompt: `Analyze this emotional journal entry:\n\n${journal}`,
     temperature: 0.4,
   });
 
-  const raw = response.choices[0].message.content || "{}";
-  const data = JSON.parse(raw);
   return normalizeResponse(journal.trim(), data);
 }
 
@@ -115,10 +102,9 @@ export async function analyzeJournal(
   const text = journal.trim();
   if (!text) throw new Error("Journal entry cannot be empty");
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
-  if (apiKey) {
+  if (getGeminiApiKey()) {
     try {
-      return await openaiAnalyze(text);
+      return await geminiAnalyze(text);
     } catch {
       // fall through
     }

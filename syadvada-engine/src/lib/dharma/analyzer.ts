@@ -1,11 +1,9 @@
-import OpenAI from "openai";
-
+import { generateJson, getGeminiApiKey } from "../gemini/client";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type {
   DharmaAnalyzeResponse,
   OptionAnalysis,
-  PurusharthaId,
   PurusharthaImpact,
 } from "./types";
 
@@ -38,8 +36,6 @@ Respond ONLY with valid JSON:
   "synthesis": "...",
   "recommendation": "..."
 }`;
-
-const PURUSHARTHA_IDS: PurusharthaId[] = ["dharma", "artha", "kama", "moksha"];
 
 function normalizeImpact(raw: Partial<PurusharthaImpact> | undefined): PurusharthaImpact {
   return {
@@ -75,33 +71,21 @@ function normalizeResponse(
     dominant_tension: data.dominant_tension ?? "Dharma vs Artha",
     synthesis: data.synthesis ?? "Both paths carry merit and cost.",
     recommendation: data.recommendation ?? "Deliberate with full awareness of trade-offs.",
-    analyzer: "openai",
+    analyzer: "gemini",
   };
 }
 
-async function openaiAnalyze(
+async function geminiAnalyze(
   dilemma: string,
   optionA: string,
   optionB: string,
 ): Promise<DharmaAnalyzeResponse> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-
-  const response = await client.chat.completions.create({
-    model,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: DHARMA_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: `Dilemma: ${dilemma}\n\nOption A: ${optionA}\n\nOption B: ${optionB}`,
-      },
-    ],
+  const data = await generateJson<Partial<DharmaAnalyzeResponse>>({
+    systemInstruction: DHARMA_SYSTEM_PROMPT,
+    userPrompt: `Dilemma: ${dilemma}\n\nOption A: ${optionA}\n\nOption B: ${optionB}`,
     temperature: 0.4,
   });
 
-  const raw = response.choices[0].message.content || "{}";
-  const data = JSON.parse(raw);
   return normalizeResponse(dilemma.trim(), optionA.trim(), optionB.trim(), data);
 }
 
@@ -117,10 +101,9 @@ export async function analyzeDilemma(
   if (!d) throw new Error("Dilemma cannot be empty");
   if (!a || !b) throw new Error("Both options are required");
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
-  if (apiKey) {
+  if (getGeminiApiKey()) {
     try {
-      return await openaiAnalyze(d, a, b);
+      return await geminiAnalyze(d, a, b);
     } catch {
       // fall through
     }

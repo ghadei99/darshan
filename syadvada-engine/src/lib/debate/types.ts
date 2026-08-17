@@ -11,7 +11,7 @@ export interface DebateReplyResponse {
   reply: string;
   school: DebateSchool;
   schoolLabel: string;
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }
 
 export interface DebateConcludeResponse {
@@ -20,7 +20,7 @@ export interface DebateConcludeResponse {
   key_points: string[];
   strengths_user: string;
   strengths_opponent: string;
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }
 
 export interface SchoolMeta {

@@ -1,5 +1,4 @@
-import OpenAI from "openai";
-
+import { generateJson, getGeminiApiKey } from "../gemini/client";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { PramanaAnalyzeResponse, PramanaId } from "./types";
@@ -87,26 +86,23 @@ function normalizeResponse(
     pramanas,
     philosophical_critique:
       data.philosophical_critique ?? "Epistemic analysis unavailable.",
-    analyzer: "openai",
+    analyzer: "gemini",
   };
 }
 
-async function openaiAnalyze(claim: string): Promise<PramanaAnalyzeResponse> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-
-  const response = await client.chat.completions.create({
-    model,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: PRAMANA_SYSTEM_PROMPT },
-      { role: "user", content: `Analyze this claim:\n\n${claim}` },
-    ],
+async function geminiAnalyze(claim: string): Promise<PramanaAnalyzeResponse> {
+  const data = await generateJson<Partial<{
+    dominant_pramana: string;
+    strength: number;
+    strength_label: string;
+    pramanas: Record<string, { detected?: boolean; role?: string; critique?: string }>;
+    philosophical_critique: string;
+  }>>({
+    systemInstruction: PRAMANA_SYSTEM_PROMPT,
+    userPrompt: `Analyze this claim:\n\n${claim}`,
     temperature: 0.3,
   });
 
-  const raw = response.choices[0].message.content || "{}";
-  const data = JSON.parse(raw);
   return normalizeResponse(claim.trim(), data);
 }
 
@@ -114,10 +110,9 @@ export async function analyzeClaim(claim: string): Promise<PramanaAnalyzeRespons
   const text = claim.trim();
   if (!text) throw new Error("Claim cannot be empty");
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
-  if (apiKey) {
+  if (getGeminiApiKey()) {
     try {
-      return await openaiAnalyze(text);
+      return await geminiAnalyze(text);
     } catch {
       // Fall through to heuristic on API errors
     }

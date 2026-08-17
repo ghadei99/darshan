@@ -10,5 +10,5 @@ export interface NyayaAnalyzeResponse {
   validity: string;
   steps: NyayaSteps;
   fallacies: string[];
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }

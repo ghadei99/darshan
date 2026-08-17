@@ -5,7 +5,7 @@ Unified Next.js application combining two classical Indian epistemology tools:
 - **Nyāya-Logic** — five-membered syllogistic argument analysis (*pañcāvayava*)
 - **Syādvāda Engine** — seven-fold conditional perspective analysis (*Saptabhaṅgī*)
 
-Dark, meditative UI with amber accents. OpenAI integration optional; heuristic fallbacks work without an API key.
+Dark, meditative UI with amber accents. Gemini integration optional; heuristic fallbacks work without an API key.
 
 > **Note:** The folder is still named `syadvada-engine/` for git history. The unified app package name is `darshana-suite`.
 
@@ -49,8 +49,8 @@ cp .env.example .env.local
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `OPENAI_API_KEY` | No | Enables OpenAI-powered analysis for both modules |
-| `OPENAI_MODEL` | No | Model name (default: `gpt-4o-mini`) |
+| `GEMINI_API_KEY` | No | Enables Gemini-powered analysis across all modules |
+| `GEMINI_MODEL` | No | Model name (default: `gemini-2.5-flash`) |
 
 Without an API key, both modules use **heuristic analyzers** with pattern matching and template reframing.
 

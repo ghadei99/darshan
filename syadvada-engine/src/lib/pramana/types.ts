@@ -18,7 +18,7 @@ export interface PramanaAnalyzeResponse {
     shabda: PramanaDetail;
   };
   philosophical_critique: string;
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
 }
 
 export const PRAMANA_META: Record<

@@ -72,6 +72,6 @@ export interface Perspective {
 
 export interface AnalyzeResponse {
   statement: string;
-  analyzer: "openai" | "heuristic";
+  analyzer: "gemini" | "heuristic";
   perspectives: Perspective[];
 }

@@ -1,5 +1,4 @@
-import OpenAI from "openai";
-
+import { generateJson, generateText, getGeminiApiKey } from "../gemini/client";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { NyayaAnalyzeResponse, NyayaSteps } from "./types";
@@ -32,26 +31,16 @@ Respond ONLY with valid JSON:
 
 Extract or reconstruct each step. If implicit, say what you'd infer — conversationally.`;
 
-async function openaiAnalyze(argument: string): Promise<NyayaAnalyzeResponse> {
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
-
-  const response = await client.chat.completions.create({
-    model,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: NYAYA_SYSTEM_PROMPT },
-      { role: "user", content: `Analyze this argument:\n\n${argument}` },
-    ],
-    temperature: 0.3,
-  });
-
-  const raw = response.choices[0].message.content || "{}";
-  const data = JSON.parse(raw) as {
+async function geminiAnalyze(argument: string): Promise<NyayaAnalyzeResponse> {
+  const data = await generateJson<{
     validity?: string;
     steps?: Partial<NyayaSteps>;
     fallacies?: string[];
-  };
+  }>({
+    systemInstruction: NYAYA_SYSTEM_PROMPT,
+    userPrompt: `Analyze this argument:\n\n${argument}`,
+    temperature: 0.3,
+  });
 
   const stepsData = data.steps ?? {};
   return {
@@ -64,7 +53,7 @@ async function openaiAnalyze(argument: string): Promise<NyayaAnalyzeResponse> {
       nigamana: stepsData.nigamana ?? "[Unidentified]",
     },
     fallacies: data.fallacies ?? [],
-    analyzer: "openai",
+    analyzer: "gemini",
   };
 }
 
@@ -74,10 +63,9 @@ export async function analyzeArgument(
   const text = argument.trim();
   if (!text) throw new Error("Argument cannot be empty");
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim();
-  if (apiKey) {
+  if (getGeminiApiKey()) {
     try {
-      return await openaiAnalyze(text);
+      return await geminiAnalyze(text);
     } catch {
       // Fall through to heuristic on API errors
     }
