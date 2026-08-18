@@ -4,7 +4,11 @@ import { GoogleGenAI } from "@google/genai";
 
 import { getGeminiApiKey, getGeminiModel } from "@/lib/config/env";
 
-import { GeminiServiceError, toGeminiServiceError } from "./errors";
+import {
+  GeminiServiceError,
+  logGeminiFailure,
+  toGeminiServiceError,
+} from "./errors";
 import type { GenerateJsonParams, GenerateTextParams } from "./types";
 
 function createClient(): GoogleGenAI {
@@ -13,6 +17,14 @@ function createClient(): GoogleGenAI {
     throw new Error("GEMINI_API_KEY is not set");
   }
   return new GoogleGenAI({ apiKey });
+}
+
+function logClientFailure(error: GeminiServiceError): void {
+  logGeminiFailure({
+    category: error.reason,
+    model: getGeminiModel(),
+    details: error.details,
+  });
 }
 
 export async function generateText(params: GenerateTextParams): Promise<string> {
@@ -29,7 +41,9 @@ export async function generateText(params: GenerateTextParams): Promise<string> 
     });
     return response.text?.trim() ?? "";
   } catch (error) {
-    throw toGeminiServiceError(error);
+    const serviceError = toGeminiServiceError(error);
+    logClientFailure(serviceError);
+    throw serviceError;
   }
 }
 
@@ -50,14 +64,18 @@ export async function generateJson<T>(params: GenerateJsonParams): Promise<T> {
     try {
       return JSON.parse(raw) as T;
     } catch {
-      throw toGeminiServiceError(
+      const serviceError = toGeminiServiceError(
         new Error("Gemini returned malformed JSON for structured output"),
       );
+      logClientFailure(serviceError);
+      throw serviceError;
     }
   } catch (error) {
     if (error instanceof GeminiServiceError) {
       throw error;
     }
-    throw toGeminiServiceError(error);
+    const serviceError = toGeminiServiceError(error);
+    logClientFailure(serviceError);
+    throw serviceError;
   }
 }

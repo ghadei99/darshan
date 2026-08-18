@@ -1,15 +1,38 @@
-import { getGeminiApiKey, isLikelyValidGeminiKey } from "@/lib/config/env";
+import { getGeminiApiKey, getGeminiModel, isLikelyValidGeminiKey } from "@/lib/config/env";
 
-import { GeminiServiceError, classifyGeminiError } from "../gemini/errors";
+import {
+  GeminiServiceError,
+  classifyGeminiError,
+  extractGeminiErrorDetails,
+  logGeminiFailure,
+} from "../gemini/errors";
 import type { AnalyzerMeta, AnalyzerMode, FallbackReason } from "../types";
 
-function logServerFallback(reason: FallbackReason, detail?: string): void {
-  const prefix = `[darshana] Heuristic fallback (${reason})`;
-  if (detail) {
-    console.warn(prefix, detail.slice(0, 240));
-  } else {
-    console.warn(prefix);
+function logServerFallback(reason: FallbackReason, error?: unknown): void {
+  if (reason === "missing_key" || reason === "invalid_key_format") {
+    logGeminiFailure({
+      category: reason,
+      model: getGeminiModel(),
+      details: {
+        message:
+          reason === "missing_key"
+            ? "GEMINI_API_KEY is not configured"
+            : "GEMINI_API_KEY appears malformed",
+        reachedGemini: false,
+      },
+    });
+    return;
   }
+
+  const details = extractGeminiErrorDetails(error);
+  logGeminiFailure({
+    category: reason,
+    model: getGeminiModel(),
+    details: {
+      ...details,
+      reachedGemini: details.reachedGemini || true,
+    },
+  });
 }
 
 /**
@@ -29,10 +52,7 @@ export async function withGeminiFallback<T extends AnalyzerMeta>(
   }
 
   if (!isLikelyValidGeminiKey(apiKey)) {
-    logServerFallback(
-      "invalid_key_format",
-      "GEMINI_API_KEY appears malformed; set a key from https://aistudio.google.com/apikey",
-    );
+    logServerFallback("invalid_key_format");
     const result = await heuristicFn();
     return {
       ...result,
@@ -49,8 +69,7 @@ export async function withGeminiFallback<T extends AnalyzerMeta>(
       error instanceof GeminiServiceError
         ? error.reason
         : classifyGeminiError(error);
-    const detail = error instanceof Error ? error.message : String(error);
-    logServerFallback(reason, detail);
+    logServerFallback(reason, error);
     const result = await heuristicFn();
     return {
       ...result,

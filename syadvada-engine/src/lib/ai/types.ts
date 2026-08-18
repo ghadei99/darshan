@@ -8,6 +8,8 @@ export type FallbackReason =
   | "permission_error"
   | "rate_limited"
   | "quota_exceeded"
+  | "invalid_request"
+  | "model_not_found"
   | "model_error"
   | "network_error"
   | "invalid_response"

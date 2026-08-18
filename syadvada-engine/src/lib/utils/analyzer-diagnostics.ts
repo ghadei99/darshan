@@ -9,6 +9,8 @@ const FALLBACK_MESSAGES: Record<FallbackReason, string> = {
   permission_error: "Heuristic fallback active: Gemini permission denied.",
   rate_limited: "Heuristic fallback active: Gemini rate limit reached.",
   quota_exceeded: "Heuristic fallback active: Gemini quota exceeded.",
+  invalid_request: "Heuristic fallback active: Gemini rejected the request.",
+  model_not_found: "Heuristic fallback active: Gemini model not found.",
   model_error: "Heuristic fallback active: Gemini model error.",
   network_error: "Heuristic fallback active: Gemini network error.",
   invalid_response: "Heuristic fallback active: Gemini returned an invalid response.",
