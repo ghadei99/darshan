@@ -1,4 +1,5 @@
-import { generateJson, generateText, getGeminiApiKey } from "../gemini/client";
+import { generateJson } from "../gemini/client";
+import { withGeminiFallback } from "../gemini/fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { NyayaAnalyzeResponse, NyayaSteps } from "./types";
@@ -63,13 +64,8 @@ export async function analyzeArgument(
   const text = argument.trim();
   if (!text) throw new Error("Argument cannot be empty");
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiAnalyze(text);
-    } catch {
-      // Fall through to heuristic on API errors
-    }
-  }
-
-  return heuristicAnalyze(text);
+  return withGeminiFallback(
+    () => geminiAnalyze(text),
+    () => heuristicAnalyze(text),
+  );
 }

@@ -3,9 +3,9 @@
  * Only pratyakṣa (direct perception) is pramāṇa; śabda, metaphysics, and unverified inference are rejected.
  */
 
-import { CARVAKA_OPENAI_PERSONA } from "./personas";
+import { CARVAKA_PERSONA } from "./personas";
 
-export { CARVAKA_OPENAI_PERSONA };
+export { CARVAKA_PERSONA };
 
 const SHABDA_PATTERNS = [
   /\b(scripture|veda|vedas|texts?|ancient|tradition|guru|sage|revealed|revelation|holy|sacred|word of|according to|apta|āpta|shabda|śabda|testimony|authority says)\b/i,

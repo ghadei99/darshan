@@ -1,4 +1,5 @@
-import { generateJson, getGeminiApiKey } from "../gemini/client";
+import { generateJson } from "../gemini/client";
+import { withGeminiFallback } from "../gemini/fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { PramanaAnalyzeResponse, PramanaId } from "./types";
@@ -110,13 +111,8 @@ export async function analyzeClaim(claim: string): Promise<PramanaAnalyzeRespons
   const text = claim.trim();
   if (!text) throw new Error("Claim cannot be empty");
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiAnalyze(text);
-    } catch {
-      // Fall through to heuristic on API errors
-    }
-  }
-
-  return heuristicAnalyze(text);
+  return withGeminiFallback(
+    () => geminiAnalyze(text),
+    () => heuristicAnalyze(text),
+  );
 }

@@ -1,4 +1,5 @@
-import { generateJson, getGeminiApiKey } from "../gemini/client";
+import { generateJson } from "../gemini/client";
+import { withGeminiFallback } from "../gemini/fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type {
@@ -102,13 +103,8 @@ export async function analyzeJournal(
   const text = journal.trim();
   if (!text) throw new Error("Journal entry cannot be empty");
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiAnalyze(text);
-    } catch {
-      // fall through
-    }
-  }
-
-  return heuristicAnalyze(text);
+  return withGeminiFallback(
+    () => geminiAnalyze(text),
+    () => heuristicAnalyze(text),
+  );
 }

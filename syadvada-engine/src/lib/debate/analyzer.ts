@@ -1,10 +1,11 @@
-import { generateJson, generateText, getGeminiApiKey } from "../gemini/client";
+import { generateJson, generateText } from "../gemini/client";
+import { withGeminiFallback } from "../gemini/fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import {
-  ADVAITA_OPENAI_PERSONA,
-  CARVAKA_OPENAI_PERSONA,
-  MADHYAMIKA_OPENAI_PERSONA,
-  NYAYA_OPENAI_PERSONA,
+  ADVAITA_PERSONA,
+  CARVAKA_PERSONA,
+  MADHYAMIKA_PERSONA,
+  NYAYA_PERSONA,
 } from "./personas";
 import { heuristicConclude, heuristicReply } from "./heuristic";
 import type {
@@ -17,10 +18,10 @@ import type {
 import { SCHOOL_META } from "./types";
 
 const SCHOOL_PERSONAS: Record<DebateSchool, string> = {
-  carvaka: CARVAKA_OPENAI_PERSONA,
-  advaita: ADVAITA_OPENAI_PERSONA,
-  nyaya: NYAYA_OPENAI_PERSONA,
-  madhyamika: MADHYAMIKA_OPENAI_PERSONA,
+  carvaka: CARVAKA_PERSONA,
+  advaita: ADVAITA_PERSONA,
+  nyaya: NYAYA_PERSONA,
+  madhyamika: MADHYAMIKA_PERSONA,
 };
 
 function formatHistory(history: DebateMessage[]): string {
@@ -103,22 +104,14 @@ export async function processDebate(
   }
 
   if (action === "reply") {
-    if (getGeminiApiKey()) {
-      try {
-        return await geminiReply(school, history);
-      } catch {
-        // fall through
-      }
-    }
-    return heuristicReply(school, history);
+    return withGeminiFallback(
+      () => geminiReply(school, history),
+      () => heuristicReply(school, history),
+    );
   }
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiConclude(school, history);
-    } catch {
-      // fall through
-    }
-  }
-  return heuristicConclude(school, history);
+  return withGeminiFallback(
+    () => geminiConclude(school, history),
+    () => heuristicConclude(school, history),
+  );
 }

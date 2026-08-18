@@ -1,4 +1,5 @@
-import { generateJson, getGeminiApiKey } from "./gemini/client";
+import { generateJson } from "./gemini/client";
+import { withGeminiFallback } from "./gemini/fallback";
 import { heuristicAnalyze } from "./heuristic";
 import { JSON_VOICE_NOTE } from "./prompts/voice";
 import { parseInput } from "./syadvada/input";
@@ -114,13 +115,8 @@ export async function analyzeStatement(statement: string): Promise<AnalyzeRespon
     throw new Error("Statement cannot be empty");
   }
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiAnalyze(text);
-    } catch {
-      // Fall through to heuristic on API errors
-    }
-  }
-
-  return heuristicAnalyze(text);
+  return withGeminiFallback(
+    () => geminiAnalyze(text),
+    () => heuristicAnalyze(text),
+  );
 }

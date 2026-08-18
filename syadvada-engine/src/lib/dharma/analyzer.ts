@@ -1,4 +1,5 @@
-import { generateJson, getGeminiApiKey } from "../gemini/client";
+import { generateJson } from "../gemini/client";
+import { withGeminiFallback } from "../gemini/fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type {
@@ -101,13 +102,8 @@ export async function analyzeDilemma(
   if (!d) throw new Error("Dilemma cannot be empty");
   if (!a || !b) throw new Error("Both options are required");
 
-  if (getGeminiApiKey()) {
-    try {
-      return await geminiAnalyze(d, a, b);
-    } catch {
-      // fall through
-    }
-  }
-
-  return heuristicAnalyze(d, a, b);
+  return withGeminiFallback(
+    () => geminiAnalyze(d, a, b),
+    () => heuristicAnalyze(d, a, b),
+  );
 }
