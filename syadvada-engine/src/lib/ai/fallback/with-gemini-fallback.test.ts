@@ -28,14 +28,25 @@ describe("withGeminiFallback", () => {
     assert.equal(result.value, "local");
   });
 
-  it("falls back with invalid_key_format for non-AIza keys", async () => {
-    process.env.GEMINI_API_KEY = "AQ.invalid-token-format";
+  it("falls back with invalid_key_format for obviously malformed keys", async () => {
+    process.env.GEMINI_API_KEY = "undefined";
     const result = await withGeminiFallback<TestResult>(
       async () => ({ analyzer: "gemini", value: "gemini" }),
       () => ({ analyzer: "heuristic", value: "local" }),
     );
     assert.equal(result.analyzer, "heuristic");
     assert.equal(result.fallbackReason, "invalid_key_format");
+  });
+
+  it("accepts authorization-style AQ. keys and calls geminiFn", async () => {
+    process.env.GEMINI_API_KEY = "AQ.Ab8FakeAuthorizationKeyForUnitTest";
+    const result = await withGeminiFallback<TestResult>(
+      async () => ({ analyzer: "gemini", value: "gemini" }),
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+    assert.equal(result.analyzer, "gemini");
+    assert.equal(result.value, "gemini");
+    assert.equal(result.fallbackReason, undefined);
   });
 
   it("returns gemini result when geminiFn succeeds", async () => {

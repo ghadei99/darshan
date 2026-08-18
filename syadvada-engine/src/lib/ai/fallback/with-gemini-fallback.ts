@@ -31,7 +31,7 @@ export async function withGeminiFallback<T extends AnalyzerMeta>(
   if (!isLikelyValidGeminiKey(apiKey)) {
     logServerFallback(
       "invalid_key_format",
-      "Key must be from https://aistudio.google.com/apikey (starts with AIzaSy)",
+      "GEMINI_API_KEY appears malformed; set a key from https://aistudio.google.com/apikey",
     );
     const result = await heuristicFn();
     return {

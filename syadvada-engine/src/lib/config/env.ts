@@ -12,7 +12,29 @@ export function getGeminiModel(): string {
   return model || DEFAULT_GEMINI_MODEL;
 }
 
-/** Google AI Studio keys start with AIza — OAuth tokens (AQ.*) and JWTs are rejected. */
+const PLACEHOLDER_VALUES = new Set([
+  "undefined",
+  "null",
+  "none",
+  "your-api-key",
+  "changeme",
+  "placeholder",
+  "insert-key-here",
+]);
+
+/**
+ * Reject only obviously malformed values before calling Gemini.
+ * Standard keys (AIza…) and authorization keys (AQ.…) are accepted;
+ * real authentication is left to the Gemini SDK/API.
+ */
 export function isLikelyValidGeminiKey(key: string): boolean {
-  return key.startsWith("AIza");
+  const trimmed = key.trim();
+  if (trimmed.length < 10) return false;
+
+  if (PLACEHOLDER_VALUES.has(trimmed.toLowerCase())) return false;
+  if (trimmed.startsWith("eyJ")) return false;
+  if (/^bearer\s+/i.test(trimmed)) return false;
+  if (/\s/.test(trimmed)) return false;
+
+  return true;
 }
