@@ -1,5 +1,5 @@
-import { generateJson, generateText } from "../gemini/client";
-import { withGeminiFallback } from "../gemini/fallback";
+import { generateJson, generateText } from "@/lib/ai/gemini/client";
+import { withGeminiFallback } from "@/lib/ai/fallback/with-gemini-fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import {
   ADVAITA_PERSONA,

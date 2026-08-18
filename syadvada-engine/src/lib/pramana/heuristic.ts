@@ -57,9 +57,6 @@ function buildDetail(
   claim: string,
   score: number,
 ): PramanaDetail {
-  const truncated =
-    claim.length > 80 ? `${claim.slice(0, 77).trim()}…` : claim;
-
   const roles: Record<PramanaId, { yes: string; no: string }> = {
     pratyaksha: {
       yes: "The claim appeals to direct sensory evidence or measurable observation as its epistemic ground.",

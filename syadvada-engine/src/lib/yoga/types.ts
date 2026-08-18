@@ -1,3 +1,5 @@
+import type { AnalyzerMeta } from "@/lib/ai/types";
+
 export type VrittiId =
   | "pramana"
   | "viparyaya"
@@ -24,7 +26,7 @@ export interface AbhyasaPractice {
   description: string;
 }
 
-export interface YogaAnalyzeResponse {
+export interface YogaAnalyzeResponse extends AnalyzerMeta {
   journal: string;
   dominant_vritti: VrittiId;
   dominant_klesha: KleshaId;
@@ -37,7 +39,6 @@ export interface YogaAnalyzeResponse {
     philosophical_alignment: string;
     psychological_insight: string;
   };
-  analyzer: "gemini" | "heuristic";
 }
 
 export const VRITTI_META: Record<

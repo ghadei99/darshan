@@ -1,3 +1,5 @@
+import type { AnalyzerMeta } from "@/lib/ai/types";
+
 export interface NyayaSteps {
   pratijna: string;
   hetu: string;
@@ -6,9 +8,8 @@ export interface NyayaSteps {
   nigamana: string;
 }
 
-export interface NyayaAnalyzeResponse {
+export interface NyayaAnalyzeResponse extends AnalyzerMeta {
   validity: string;
   steps: NyayaSteps;
   fallacies: string[];
-  analyzer: "gemini" | "heuristic";
 }

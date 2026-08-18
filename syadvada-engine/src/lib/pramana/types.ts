@@ -6,7 +6,9 @@ export interface PramanaDetail {
   critique: string;
 }
 
-export interface PramanaAnalyzeResponse {
+import type { AnalyzerMeta } from "@/lib/ai/types";
+
+export interface PramanaAnalyzeResponse extends AnalyzerMeta {
   claim: string;
   dominant_pramana: PramanaId;
   strength: number;
@@ -18,7 +20,6 @@ export interface PramanaAnalyzeResponse {
     shabda: PramanaDetail;
   };
   philosophical_critique: string;
-  analyzer: "gemini" | "heuristic";
 }
 
 export const PRAMANA_META: Record<

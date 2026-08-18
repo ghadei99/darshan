@@ -1,3 +1,5 @@
+import type { AnalyzerMeta } from "@/lib/ai/types";
+
 export type PurusharthaId = "dharma" | "artha" | "kama" | "moksha";
 
 export interface PurusharthaImpact {
@@ -13,7 +15,7 @@ export interface OptionAnalysis {
   moksha: PurusharthaImpact;
 }
 
-export interface DharmaAnalyzeResponse {
+export interface DharmaAnalyzeResponse extends AnalyzerMeta {
   dilemma: string;
   option_a: string;
   option_b: string;
@@ -24,7 +26,6 @@ export interface DharmaAnalyzeResponse {
   dominant_tension: string;
   synthesis: string;
   recommendation: string;
-  analyzer: "gemini" | "heuristic";
 }
 
 export const PURUSHARTHA_META: Record<

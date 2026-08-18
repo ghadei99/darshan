@@ -1,5 +1,5 @@
-import { generateJson } from "../gemini/client";
-import { withGeminiFallback } from "../gemini/fallback";
+import { generateJson } from "@/lib/ai/gemini/client";
+import { withGeminiFallback } from "@/lib/ai/fallback/with-gemini-fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import { heuristicAnalyze } from "./heuristic";
 import type { NyayaAnalyzeResponse, NyayaSteps } from "./types";

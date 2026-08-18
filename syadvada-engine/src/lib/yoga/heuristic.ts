@@ -91,6 +91,7 @@ function buildVrittiDetail(
   score: number,
   journal: string,
 ): PatternDetail {
+  void journal;
   const insights: Record<VrittiId, { yes: string; no: string }> = {
     pramana: {
       yes: "Moments of clear, grounded awareness are present — a foundation for abhyāsa.",

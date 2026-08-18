@@ -1,3 +1,5 @@
+import type { AnalyzerMeta } from "@/lib/ai/types";
+
 export type DebateSchool = "carvaka" | "advaita" | "nyaya" | "madhyamika";
 
 export type DebateAction = "reply" | "conclude";
@@ -7,20 +9,18 @@ export interface DebateMessage {
   content: string;
 }
 
-export interface DebateReplyResponse {
+export interface DebateReplyResponse extends AnalyzerMeta {
   reply: string;
   school: DebateSchool;
   schoolLabel: string;
-  analyzer: "gemini" | "heuristic";
 }
 
-export interface DebateConcludeResponse {
+export interface DebateConcludeResponse extends AnalyzerMeta {
   summary: string;
   verdict: string;
   key_points: string[];
   strengths_user: string;
   strengths_opponent: string;
-  analyzer: "gemini" | "heuristic";
 }
 
 export interface SchoolMeta {
