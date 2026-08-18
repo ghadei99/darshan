@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test src/lib/ai/gemini/errors.test.ts src/lib/ai/fallback/with-gemini-fallback.test.ts"
+    "test": "tsx --test src/lib/ai/gemini/errors.test.ts src/lib/ai/openrouter/errors.test.ts src/lib/ai/openrouter/client.test.ts src/lib/ai/generate.test.ts src/lib/ai/fallback/with-gemini-fallback.test.ts"
   },
   "dependencies": {
     "@google/genai": "^1.30.0",

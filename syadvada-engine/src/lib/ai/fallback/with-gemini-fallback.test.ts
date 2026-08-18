@@ -3,18 +3,31 @@ import { describe, it, afterEach } from "node:test";
 
 import type { AnalyzerMeta } from "../types";
 import { GeminiServiceError } from "../gemini/errors";
+import { OpenRouterServiceError } from "../openrouter/errors";
 import { withGeminiFallback } from "./with-gemini-fallback";
 
-const originalKey = process.env.GEMINI_API_KEY;
+const originalGeminiKey = process.env.GEMINI_API_KEY;
+const originalOpenRouterKey = process.env.OPENROUTER_API_KEY;
+const originalProvider = process.env.AI_PROVIDER;
 
 type TestResult = AnalyzerMeta & { value: string };
 
 describe("withGeminiFallback", () => {
   afterEach(() => {
-    if (originalKey === undefined) {
+    if (originalGeminiKey === undefined) {
       delete process.env.GEMINI_API_KEY;
     } else {
-      process.env.GEMINI_API_KEY = originalKey;
+      process.env.GEMINI_API_KEY = originalGeminiKey;
+    }
+    if (originalOpenRouterKey === undefined) {
+      delete process.env.OPENROUTER_API_KEY;
+    } else {
+      process.env.OPENROUTER_API_KEY = originalOpenRouterKey;
+    }
+    if (originalProvider === undefined) {
+      delete process.env.AI_PROVIDER;
+    } else {
+      process.env.AI_PROVIDER = originalProvider;
     }
   });
 
@@ -93,6 +106,54 @@ describe("withGeminiFallback", () => {
     );
     assert.equal(result.analyzer, "heuristic");
     assert.equal(result.fallbackReason, "invalid_response");
+    assert.equal(result.value, "local");
+  });
+
+  it("uses openrouter analyzer mode when AI_PROVIDER=openrouter succeeds", async () => {
+    process.env.AI_PROVIDER = "openrouter";
+    process.env.OPENROUTER_API_KEY = "sk-or-v1-test-key-abcdefghij";
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => ({ analyzer: "openrouter", value: "openrouter" }),
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "openrouter");
+    assert.equal(result.value, "openrouter");
+    assert.equal(result.fallbackReason, undefined);
+  });
+
+  it("falls back with missing_key when openrouter key is unset", async () => {
+    process.env.AI_PROVIDER = "openrouter";
+    delete process.env.OPENROUTER_API_KEY;
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => ({ analyzer: "openrouter", value: "openrouter" }),
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "heuristic");
+    assert.equal(result.fallbackReason, "missing_key");
+    assert.equal(result.value, "local");
+  });
+
+  it("falls back when openrouterFn throws", async () => {
+    process.env.AI_PROVIDER = "openrouter";
+    process.env.OPENROUTER_API_KEY = "sk-or-v1-test-key-abcdefghij";
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => {
+        throw new OpenRouterServiceError("rate_limited", "Rate limit exceeded", {
+          httpStatus: 429,
+          message: "Rate limit exceeded",
+          reachedOpenRouter: true,
+        });
+      },
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "heuristic");
+    assert.equal(result.fallbackReason, "rate_limited");
     assert.equal(result.value, "local");
   });
 });

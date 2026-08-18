@@ -1,4 +1,4 @@
-import { generateJson, generateText } from "@/lib/ai/gemini/client";
+import { generateJson, generateText } from "@/lib/ai/generate";
 import { withGeminiFallback } from "@/lib/ai/fallback/with-gemini-fallback";
 import { JSON_VOICE_NOTE } from "../prompts/voice";
 import {

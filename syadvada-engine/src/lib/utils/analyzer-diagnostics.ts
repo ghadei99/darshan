@@ -13,8 +13,9 @@ const FALLBACK_MESSAGES: Record<FallbackReason, string> = {
   model_not_found: "Heuristic fallback active: Gemini model not found.",
   model_error: "Heuristic fallback active: Gemini model error.",
   network_error: "Heuristic fallback active: Gemini network error.",
-  invalid_response: "Heuristic fallback active: Gemini returned an invalid response.",
+  invalid_response: "Heuristic fallback active: AI provider returned an invalid response.",
   unknown_gemini_error: "Heuristic fallback active: Gemini unavailable.",
+  unknown_openrouter_error: "Heuristic fallback active: OpenRouter unavailable.",
 };
 
 /** Log an accurate client-side diagnostic when heuristic fallback was used. */

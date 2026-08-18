@@ -1,4 +1,4 @@
-import { generateJson } from "@/lib/ai/gemini/client";
+import { generateJson } from "@/lib/ai/generate";
 import { withGeminiFallback } from "@/lib/ai/fallback/with-gemini-fallback";
 
 import { heuristicAnalyze } from "./heuristic";

@@ -1,5 +1,7 @@
 /** Shared analyzer metadata returned by all domain API routes. */
-export type AnalyzerMode = "gemini" | "heuristic";
+export type AnalyzerMode = "gemini" | "openrouter" | "heuristic";
+
+export type AIProvider = "gemini" | "openrouter";
 
 export type FallbackReason =
   | "missing_key"
@@ -13,7 +15,8 @@ export type FallbackReason =
   | "model_error"
   | "network_error"
   | "invalid_response"
-  | "unknown_gemini_error";
+  | "unknown_gemini_error"
+  | "unknown_openrouter_error";
 
 export interface AnalyzerMeta {
   analyzer: AnalyzerMode;
