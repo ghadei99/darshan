@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { analyzeStatement } from "@/lib/analyzer";
+import { analyzeStatement } from "@/lib/syadvada/analyzer";
 
 export async function POST(request: NextRequest) {
   try {

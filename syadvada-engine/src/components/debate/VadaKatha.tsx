@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type {
   DebateConcludeResponse,
   DebateMessage,
@@ -84,7 +84,10 @@ export function VadaKatha() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Debate failed");
 
-      warnIfHeuristicFallback(data.analyzer);
+      warnIfHeuristicFallback({
+        analyzer: data.analyzer,
+        fallbackReason: data.fallbackReason,
+      });
 
       if (Array.isArray(data.history)) {
         setMessages(data.history);
@@ -122,7 +125,10 @@ export function VadaKatha() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not conclude");
 
-      warnIfHeuristicFallback(data.analyzer);
+      warnIfHeuristicFallback({
+        analyzer: data.analyzer,
+        fallbackReason: data.fallbackReason,
+      });
 
       setSummary(data as DebateConcludeResponse);
     } catch (err) {

@@ -1,4 +1,4 @@
-import { PramanaExplorer } from "@/components/PramanaExplorer";
+import { PramanaExplorer } from "@/components/pramana/PramanaExplorer";
 
 export default function PramanaPage() {
   return (

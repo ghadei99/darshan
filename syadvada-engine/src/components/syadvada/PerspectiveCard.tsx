@@ -1,6 +1,6 @@
 "use client";
 
-import type { Perspective } from "@/lib/types";
+import type { Perspective } from "@/lib/syadvada/types";
 
 interface PerspectiveCardProps {
   perspective: Perspective;

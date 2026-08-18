@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { PramanaAnalyzeResponse, PramanaId } from "@/lib/pramana/types";
 import { PRAMANA_META } from "@/lib/pramana/types";
 
@@ -67,8 +67,12 @@ export function PramanaExplorer() {
         throw new Error(data.error || "Analysis failed");
       }
 
-      setResult(data as PramanaAnalyzeResponse);
-      warnIfHeuristicFallback((data as PramanaAnalyzeResponse).analyzer);
+      const typed = data as PramanaAnalyzeResponse;
+      setResult(typed);
+      warnIfHeuristicFallback({
+        analyzer: typed.analyzer,
+        fallbackReason: typed.fallbackReason,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);

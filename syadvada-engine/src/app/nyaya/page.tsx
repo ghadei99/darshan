@@ -1,4 +1,4 @@
-import { NyayaLogic } from "@/components/NyayaLogic";
+import { NyayaLogic } from "@/components/nyaya/NyayaLogic";
 
 export default function NyayaPage() {
   return (

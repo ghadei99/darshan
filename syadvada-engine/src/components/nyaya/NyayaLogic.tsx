@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { NyayaAnalyzeResponse } from "@/lib/nyaya/types";
 
 const STEPS = [
@@ -47,8 +47,12 @@ export function NyayaLogic() {
         throw new Error(data.error || "Analysis failed");
       }
 
-      setResult(data as NyayaAnalyzeResponse);
-      warnIfHeuristicFallback((data as NyayaAnalyzeResponse).analyzer);
+      const typed = data as NyayaAnalyzeResponse;
+      setResult(typed);
+      warnIfHeuristicFallback({
+        analyzer: typed.analyzer,
+        fallbackReason: typed.fallbackReason,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);

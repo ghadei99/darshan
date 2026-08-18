@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type {
   DharmaAnalyzeResponse,
   OptionAnalysis,
@@ -126,8 +126,12 @@ export function DharmaDilemmaSolver() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Analysis failed");
 
-      setResult(data as DharmaAnalyzeResponse);
-      warnIfHeuristicFallback((data as DharmaAnalyzeResponse).analyzer);
+      const typed = data as DharmaAnalyzeResponse;
+      setResult(typed);
+      warnIfHeuristicFallback({
+        analyzer: typed.analyzer,
+        fallbackReason: typed.fallbackReason,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);

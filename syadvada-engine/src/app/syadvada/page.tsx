@@ -1,4 +1,4 @@
-import { SyadvadaEngine } from "@/components/SyadvadaEngine";
+import { SyadvadaEngine } from "@/components/syadvada/SyadvadaEngine";
 
 export default function SyadvadaPage() {
   return (

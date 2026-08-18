@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Cinzel, Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 
-import { AnimatedBackground } from "@/components/AnimatedBackground";
-import { AppNav } from "@/components/AppNav";
+import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
+import { AppNav } from "@/components/shared/AppNav";
 
 import "./globals.css";
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { analyzeStatement } from "@/lib/analyzer";
+import { analyzeStatement } from "@/lib/syadvada/analyzer";
 
 /** Backward-compatible alias — prefer /api/syadvada/analyze */
 export async function POST(request: NextRequest) {

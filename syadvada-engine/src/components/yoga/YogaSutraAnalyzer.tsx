@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { YogaAnalyzeResponse } from "@/lib/yoga/types";
 import {
   KLESHA_META,
@@ -62,8 +62,12 @@ export function YogaSutraAnalyzer() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Analysis failed");
 
-      setResult(data as YogaAnalyzeResponse);
-      warnIfHeuristicFallback((data as YogaAnalyzeResponse).analyzer);
+      const typed = data as YogaAnalyzeResponse;
+      setResult(typed);
+      warnIfHeuristicFallback({
+        analyzer: typed.analyzer,
+        fallbackReason: typed.fallbackReason,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);

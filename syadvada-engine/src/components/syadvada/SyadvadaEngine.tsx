@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import { warnIfHeuristicFallback } from "@/lib/analyzer-status";
-import type { AnalyzeResponse } from "@/lib/types";
+import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
+import type { AnalyzeResponse } from "@/lib/syadvada/types";
 
 import { PerspectiveGrid } from "./PerspectiveGrid";
 import { ViewToggle } from "./ViewToggle";
@@ -41,8 +41,12 @@ export function SyadvadaEngine() {
         throw new Error(data.error || "Analysis failed");
       }
 
-      setResult(data as AnalyzeResponse);
-      warnIfHeuristicFallback((data as AnalyzeResponse).analyzer);
+      const typed = data as AnalyzeResponse;
+      setResult(typed);
+      warnIfHeuristicFallback({
+        analyzer: typed.analyzer,
+        fallbackReason: typed.fallbackReason,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setResult(null);

@@ -62,12 +62,16 @@ export function AppNav() {
   const pathname = usePathname();
   const active = activeKey(pathname);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [trackedPathname, setTrackedPathname] = useState(pathname);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
-  useEffect(() => {
-    closeDrawer();
-  }, [pathname, closeDrawer]);
+  if (trackedPathname !== pathname) {
+    setTrackedPathname(pathname);
+    if (drawerOpen) {
+      setDrawerOpen(false);
+    }
+  }
 
   useEffect(() => {
     if (!drawerOpen) return;

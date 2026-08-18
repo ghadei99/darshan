@@ -1,4 +1,4 @@
-import { DharmaDilemmaSolver } from "@/components/DharmaDilemmaSolver";
+import { DharmaDilemmaSolver } from "@/components/dharma/DharmaDilemmaSolver";
 
 export default function DharmaPage() {
   return <DharmaDilemmaSolver />;

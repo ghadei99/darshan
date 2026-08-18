@@ -1,4 +1,4 @@
-import type { PerspectiveId } from "../types";
+import type { PerspectiveId } from "./types";
 import type { InputAnalysis } from "./input";
 import { quoteInput } from "./input";
 

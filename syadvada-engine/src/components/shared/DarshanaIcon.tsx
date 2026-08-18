@@ -1,18 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 interface DarshanaIconProps {
   className?: string;
   size?: number;
 }
 
-export function DarshanaIcon({ className = "", size = 48 }: DarshanaIconProps) {
-  const [isMounted, setIsMounted] = useState(false);
+function subscribe() {
+  return () => {};
+}
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+export function DarshanaIcon({ className = "", size = 48 }: DarshanaIconProps) {
+  const isMounted = useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
 
   if (!isMounted) {
     return (

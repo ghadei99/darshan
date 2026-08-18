@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "darshana-theme";
 
@@ -23,24 +23,40 @@ function applyTheme(theme: Theme) {
   document.documentElement.setAttribute("data-theme", theme);
 }
 
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+function getClientTheme(): Theme {
+  return (
+    getStoredTheme() ??
+    (document.documentElement.getAttribute("data-theme") as Theme | null) ??
+    getSystemTheme()
+  );
+}
 
-  useEffect(() => {
-    const initial =
-      getStoredTheme() ??
-      (document.documentElement.getAttribute("data-theme") as Theme | null) ??
-      getSystemTheme();
-    setTheme(initial);
-    setMounted(true);
-  }, []);
+function subscribe(onStoreChange: () => void) {
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const onThemeChange = () => onStoreChange();
+
+  media.addEventListener("change", onThemeChange);
+  window.addEventListener("darshana-theme-change", onThemeChange);
+
+  return () => {
+    media.removeEventListener("change", onThemeChange);
+    window.removeEventListener("darshana-theme-change", onThemeChange);
+  };
+}
+
+export function ThemeToggle() {
+  const theme = useSyncExternalStore(subscribe, getClientTheme, () => "light" as Theme);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   function toggleTheme() {
     const next: Theme = theme === "light" ? "dark" : "light";
-    setTheme(next);
     applyTheme(next);
     localStorage.setItem(STORAGE_KEY, next);
+    window.dispatchEvent(new Event("darshana-theme-change"));
   }
 
   return (
