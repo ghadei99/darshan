@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it, afterEach } from "node:test";
 
 import type { AnalyzerMeta } from "../types";
+import { GeminiServiceError } from "../gemini/errors";
 import { withGeminiFallback } from "./with-gemini-fallback";
 
 const originalKey = process.env.GEMINI_API_KEY;
@@ -70,5 +71,28 @@ describe("withGeminiFallback", () => {
     );
     assert.equal(result.analyzer, "heuristic");
     assert.equal(result.fallbackReason, "authentication_error");
+  });
+
+  it("falls back when geminiFn throws MAX_TOKENS truncation", async () => {
+    process.env.GEMINI_API_KEY = "AIzaSyFakeKeyForUnitTestOnly";
+    const truncated = new GeminiServiceError(
+      "invalid_response",
+      "Gemini output truncated (finishReason=MAX_TOKENS, length=187)",
+      {
+        finishReason: "MAX_TOKENS",
+        message: "Gemini output truncated at 187 characters",
+        reachedGemini: true,
+      },
+    );
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => {
+        throw truncated;
+      },
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+    assert.equal(result.analyzer, "heuristic");
+    assert.equal(result.fallbackReason, "invalid_response");
+    assert.equal(result.value, "local");
   });
 });

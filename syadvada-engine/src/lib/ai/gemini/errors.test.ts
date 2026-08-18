@@ -4,6 +4,7 @@ import { ApiError } from "@google/genai";
 
 import {
   classifyGeminiError,
+  ensureCompleteGeneration,
   extractGeminiErrorDetails,
   GeminiServiceError,
   toGeminiServiceError,
@@ -130,5 +131,56 @@ describe("GeminiServiceError", () => {
     });
     assert.equal(err.reason, "authentication_error");
     assert.equal(err.details.httpStatus, 401);
+  });
+});
+
+describe("ensureCompleteGeneration", () => {
+  it("allows STOP finish reason", () => {
+    assert.doesNotThrow(() =>
+      ensureCompleteGeneration({
+        finishReason: "STOP",
+        generatedTextLength: 240,
+      }),
+    );
+  });
+
+  it("allows unspecified finish reason", () => {
+    assert.doesNotThrow(() =>
+      ensureCompleteGeneration({
+        generatedTextLength: 120,
+      }),
+    );
+  });
+
+  it("rejects MAX_TOKENS truncated output", () => {
+    assert.throws(
+      () =>
+        ensureCompleteGeneration({
+          finishReason: "MAX_TOKENS",
+          generatedTextLength: 187,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof GeminiServiceError);
+        assert.equal(error.reason, "invalid_response");
+        assert.equal(error.details.finishReason, "MAX_TOKENS");
+        assert.equal(error.details.reachedGemini, true);
+        return true;
+      },
+    );
+  });
+
+  it("tags MAX_TOKENS truncation as invalid_response for fallback", () => {
+    const truncated = new GeminiServiceError(
+      "invalid_response",
+      "Gemini output truncated (finishReason=MAX_TOKENS, length=187)",
+      {
+        finishReason: "MAX_TOKENS",
+        message: "Gemini output truncated at 187 characters",
+        reachedGemini: true,
+      },
+    );
+
+    assert.equal(truncated.reason, "invalid_response");
+    assert.equal(truncated.details.finishReason, "MAX_TOKENS");
   });
 });

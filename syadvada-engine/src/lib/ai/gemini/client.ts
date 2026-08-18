@@ -6,6 +6,7 @@ import { getGeminiApiKey, getGeminiModel } from "@/lib/config/env";
 
 import {
   GeminiServiceError,
+  ensureCompleteGeneration,
   logGeminiFailure,
   toGeminiServiceError,
 } from "./errors";
@@ -39,8 +40,21 @@ export async function generateText(params: GenerateTextParams): Promise<string> 
         maxOutputTokens: params.maxOutputTokens,
       },
     });
-    return response.text?.trim() ?? "";
+
+    const text = response.text?.trim() ?? "";
+    const finishReason = response.candidates?.[0]?.finishReason;
+
+    ensureCompleteGeneration({
+      finishReason,
+      generatedTextLength: text.length,
+    });
+
+    return text;
   } catch (error) {
+    if (error instanceof GeminiServiceError) {
+      logClientFailure(error);
+      throw error;
+    }
     const serviceError = toGeminiServiceError(error);
     logClientFailure(serviceError);
     throw serviceError;

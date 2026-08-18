@@ -18,6 +18,7 @@ export interface GeminiErrorDetails {
   httpStatus?: number;
   apiStatus?: string;
   apiCode?: number | string;
+  finishReason?: string;
   message: string;
   reachedGemini: boolean;
 }
@@ -214,6 +215,26 @@ export function classifyGeminiError(
   return "unknown_gemini_error";
 }
 
+export interface GenerationMetadata {
+  finishReason?: string;
+  generatedTextLength: number;
+}
+
+/** Reject truncated Gemini generations so callers can fall back instead of returning partial text. */
+export function ensureCompleteGeneration(meta: GenerationMetadata): void {
+  if (meta.finishReason !== "MAX_TOKENS") return;
+
+  throw new GeminiServiceError(
+    "invalid_response",
+    `Gemini output truncated (finishReason=MAX_TOKENS, length=${meta.generatedTextLength})`,
+    {
+      finishReason: meta.finishReason,
+      message: `Gemini output truncated at ${meta.generatedTextLength} characters`,
+      reachedGemini: true,
+    },
+  );
+}
+
 export function logGeminiFailure(params: {
   category: FallbackReason;
   model: string;
@@ -224,6 +245,7 @@ export function logGeminiFailure(params: {
     httpStatus: params.details.httpStatus,
     apiStatus: params.details.apiStatus,
     apiCode: params.details.apiCode,
+    finishReason: params.details.finishReason,
     message: params.details.message,
     model: params.model,
     reachedGemini: params.details.reachedGemini,

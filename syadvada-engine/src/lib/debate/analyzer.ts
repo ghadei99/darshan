@@ -30,6 +30,8 @@ function formatHistory(history: DebateMessage[]): string {
     .join("\n\n");
 }
 
+const DEBATE_MAX_OUTPUT_TOKENS = 1024;
+
 async function geminiReply(
   school: DebateSchool,
   history: DebateMessage[],
@@ -46,7 +48,7 @@ Respond as a direct rejoinder to the challenger's LATEST statement in this vāda
     }`,
     userPrompt: `Debate transcript so far:\n\n${formatHistory(history)}\n\nRespond as the ${meta.label} opponent to the challenger's latest statement.`,
     temperature: 0.85,
-    maxOutputTokens: 450,
+    maxOutputTokens: DEBATE_MAX_OUTPUT_TOKENS,
   });
 
   return {
