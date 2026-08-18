@@ -124,7 +124,7 @@ export const ARCHIVE_TERMS: ArchiveTerm[] = [
     school: "Jain",
     tools: ["Syādvāda Engine"],
     definition:
-      "The Jain method of seven-fold conditional logic (Saptabhaṅgī) that qualifies every proposition with 'syāt' (in some respect). It avoids dogmatic absolutism by acknowledging multiple valid perspectives.",
+      "In the Jain philosophical framework, the doctrine and method of conditional predication using syāt ('in some respect, from a certain standpoint'). Syādvāda qualifies assertions from particular standpoints; it is closely related to, but not identical with, the sevenfold Saptabhaṅgī scheme through which it is often expressed.",
   },
   {
     id: "saptabhangi",
@@ -134,7 +134,7 @@ export const ARCHIVE_TERMS: ArchiveTerm[] = [
     school: "Jain",
     tools: ["Syādvāda Engine"],
     definition:
-      "The seven conditional viewpoints through which any proposition may be qualified: syāt-asti, syāt-nāsti, syāt-asti-nāsti, syāt-avaktavyaḥ, and three combined forms with avaktavya (indescribability).",
+      "In the Jain philosophical framework, the sevenfold scheme (bhaṅgī) of conditional predication through which Syādvāda is often articulated: syāt-asti, syāt-nāsti, syāt-asti-nāsti, syāt-avaktavyaḥ, and three combined forms with avaktavya (indescribability).",
   },
   {
     id: "syat-asti",
@@ -277,6 +277,22 @@ export const ARCHIVE_TERMS: ArchiveTerm[] = [
       "Liberation — freedom from the cycle of birth and death (saṃsāra) and from ignorance (avidyā). The ultimate puruṣārtha in most darśanas; achieved through knowledge (jñāna), devotion (bhakti), or disciplined practice (yoga).",
   },
 ];
+
+/** Canonical pañcāvayava illustration (hill–smoke–fire), shared with Nyāya UI. */
+export const NYAYA_HILL_FIRE_CANONICAL = {
+  naturalLanguage: "The hill has fire because it has smoke.",
+  steps: {
+    pratijna: "The hill has fire.",
+    hetu: "Because it has smoke.",
+    udaharana: "Wherever there is smoke, there is fire, as in a kitchen.",
+    upanaya: "This hill has smoke.",
+    nigamana: "Therefore, the hill has fire.",
+  },
+} as const;
+
+/** Classical Upamāna illustration (gavaya comparison), shared with Prāmāṇa UI. */
+export const UPAMANA_GAVAYA_EXAMPLE =
+  "Someone tells me that a gavaya resembles a cow. Later, I encounter an unfamiliar animal resembling a cow and recognize it as a gavaya.";
 
 export const TOOL_TAGS: ToolTag[] = [
   "Nyāya-Logic",

@@ -15,10 +15,10 @@ const modules = [
   {
     href: "/syadvada",
     title: "Syādvāda Engine",
-    subtitle: "Saptabhaṅgī · seven-fold logic",
+    subtitle: "Anekāntavāda · Syādvāda · Saptabhaṅgī",
     description:
-      "Shatter rigid absolutes through Jain conditional predication — seven nuanced perspectives on any polarizing claim.",
-    sanskrit: "स्याद्वाद · अनेकान्तवाद",
+      "In the Jain philosophical framework, explore conditional predication (Syādvāda) and its sevenfold scheme (Saptabhaṅgī) — grounded in many-sidedness (Anekāntavāda).",
+    sanskrit: "अनेकान्तवाद · स्याद्वाद · सप्तभङ्गी",
     accentClass: "module-accent--cool",
   },
   {

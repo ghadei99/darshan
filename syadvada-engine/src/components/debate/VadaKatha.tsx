@@ -12,22 +12,39 @@ import { DEBATE_SCHOOLS, SCHOOL_META } from "@/lib/debate/types";
 
 const PREMISES = [
   {
-    text: "Suffering is entirely self-created through mental attachment, so external social reform is useless.",
-    label: "vs Cārvāka / Buddhist",
-    sub: "Challenge materialism or the Middle Way",
+    id: "carvaka-karma",
+    text: "Consciousness survives bodily death, and karma determines one's rebirth — this can be known through introspection and testimony.",
+    label: "vs Cārvāka",
+    sub: "Challenge radical empiricism",
     school: "carvaka" as DebateSchool,
   },
   {
+    id: "advaita-materialism",
     text: "The physical universe is the sole reality; consciousness is just a byproduct of brain chemistry.",
     label: "vs Advaita Vedānta",
     sub: "Debate non-dual consciousness",
     school: "advaita" as DebateSchool,
   },
   {
+    id: "nyaya-scripture",
     text: "True knowledge requires rigorous logical proof; unverified scriptural authority is invalid.",
     label: "vs Nyāya",
     sub: "Test a logical realist",
     school: "nyaya" as DebateSchool,
+  },
+  {
+    id: "madhyamika-dependence",
+    text: "Things arise dependently and do not possess independent, inherent existence; clinging to fixed views is itself part of the problem.",
+    label: "vs Mādhyamika",
+    sub: "Engage the Middle Way",
+    school: "madhyamika" as DebateSchool,
+  },
+  {
+    id: "madhyamika-extremes",
+    text: "Neither eternalism nor nihilism adequately captures the Middle Way.",
+    label: "vs Mādhyamika",
+    sub: "Between extremes",
+    school: "madhyamika" as DebateSchool,
   },
 ];
 
@@ -169,9 +186,13 @@ export function VadaKatha() {
 
       {!inArena && (
         <section className="relative mb-8 rounded-2xl suite-card p-6 sm:p-8">
-          <h2 className="mb-4 font-serif text-lg text-accent-strong">
+          <h2 className="mb-2 font-serif text-lg text-accent-strong">
             Choose Your Opponent
           </h2>
+          <p className="mb-4 text-sm leading-relaxed text-muted">
+            These are constructed debate standpoints inspired by philosophical
+            traditions, not historical quotations from individual thinkers.
+          </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {DEBATE_SCHOOLS.map((id) => {
               const meta = SCHOOL_META[id];
@@ -238,7 +259,7 @@ export function VadaKatha() {
               <div className="mt-3 space-y-2">
                 {PREMISES.map((p) => (
                   <button
-                    key={p.label}
+                    key={p.id}
                     type="button"
                     onClick={() => selectPremise(p.text, p.school)}
                     className="group w-full rounded-xl border border-border bg-input px-4 py-3 text-left transition-all hover:border-accent/30 hover:bg-accent-muted/30"

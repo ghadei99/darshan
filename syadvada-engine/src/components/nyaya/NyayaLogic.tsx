@@ -1,9 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
+import { NYAYA_HILL_FIRE_CANONICAL } from "@/lib/archive/terms";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { NyayaAnalyzeResponse } from "@/lib/nyaya/types";
+
+const CANONICAL_STEPS = [
+  { key: "pratijna" as const, label: "Pratijñā" },
+  { key: "hetu" as const, label: "Hetu" },
+  { key: "udaharana" as const, label: "Udāharaṇa" },
+  { key: "upanaya" as const, label: "Upanaya" },
+  { key: "nigamana" as const, label: "Nigamana" },
+];
 
 const STEPS = [
   { key: "pratijna" as const, label: "Pratijñā", sub: "Thesis" },
@@ -24,6 +34,13 @@ export function NyayaLogic() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<NyayaAnalyzeResponse | null>(null);
+  const [examplesOpen, setExamplesOpen] = useState(false);
+
+  function selectCanonicalExample() {
+    setArgument(NYAYA_HILL_FIRE_CANONICAL.naturalLanguage);
+    setExamplesOpen(false);
+    setError(null);
+  }
 
   async function handleAnalyze() {
     const text = argument.trim();
@@ -79,9 +96,67 @@ export function NyayaLogic() {
         <p className="mt-2 font-mono text-xs text-subtle">
           प्रतिज्ञा · हेतु · उदाहरण · उपनय · निगमन
         </p>
+        <p className="mt-3 text-center text-sm">
+          <Link href="/archive" className="text-accent transition-colors hover:text-accent-strong">
+            Learn these terms → Archive
+          </Link>
+        </p>
       </header>
 
       <section className="relative mb-10 rounded-2xl suite-card p-6 sm:p-8">
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => setExamplesOpen((o) => !o)}
+            className="flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-border-hover"
+            aria-expanded={examplesOpen}
+          >
+            <span className="font-serif text-sm text-accent-strong">
+              Examples &amp; References
+            </span>
+            <svg
+              className={`h-4 w-4 text-muted transition-transform ${examplesOpen ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {examplesOpen && (
+            <div className="mt-3 space-y-3">
+              <button
+                type="button"
+                onClick={selectCanonicalExample}
+                className="group w-full rounded-xl border border-border bg-input px-4 py-3 text-left transition-all hover:border-accent/30 hover:bg-accent-muted/30"
+              >
+                <span className="badge-accent mb-2 inline-block rounded px-2 py-0.5 font-mono text-xs font-medium">
+                  Classical example
+                </span>
+                <p className="mb-3 text-sm leading-relaxed text-body group-hover:text-heading">
+                  {NYAYA_HILL_FIRE_CANONICAL.naturalLanguage}
+                </p>
+                <dl className="space-y-2 border-t border-border pt-3 text-xs text-muted">
+                  {CANONICAL_STEPS.map((step) => (
+                    <div key={step.key}>
+                      <dt className="font-mono text-accent">{step.label}</dt>
+                      <dd className="mt-0.5 text-body">
+                        {NYAYA_HILL_FIRE_CANONICAL.steps[step.key]}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </button>
+            </div>
+          )}
+        </div>
+
         <label
           htmlFor="argument"
           className="mb-3 block font-serif text-lg text-accent-strong"
@@ -90,7 +165,9 @@ export function NyayaLogic() {
         </label>
         <p className="mb-4 text-sm text-muted">
           Enter a political speech, philosophical claim, or essay passage. The
-          sages will decompose it through classical Nyāya epistemology.
+          analyzer reconstructs the five-member structure from the argument you
+          provide; this is an educational reconstruction, not a claim that every
+          natural-language argument literally appears in classical Sanskrit form.
         </p>
         <textarea
           id="argument"

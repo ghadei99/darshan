@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
+import { UPAMANA_GAVAYA_EXAMPLE } from "@/lib/archive/terms";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { PramanaAnalyzeResponse, PramanaId } from "@/lib/pramana/types";
 import { PRAMANA_META } from "@/lib/pramana/types";
@@ -16,6 +18,11 @@ const EXAMPLES = [
     text: "There must be life on other planets because the universe is infinite and harbors similar chemical compounds.",
     label: "Anumāna",
     sub: "Inference",
+  },
+  {
+    text: UPAMANA_GAVAYA_EXAMPLE,
+    label: "Upamāna",
+    sub: "Comparison / Analogy",
   },
   {
     text: "According to ancient texts, this particular herb cleanses the blood.",
@@ -108,9 +115,19 @@ export function PramanaExplorer() {
         <p className="mt-2 font-mono text-xs text-subtle">
           प्रत्यक्ष · अनुमान · उपमान · शब्द
         </p>
+        <p className="mt-3 text-center text-sm">
+          <Link href="/archive" className="text-accent transition-colors hover:text-accent-strong">
+            Learn these terms → Archive
+          </Link>
+        </p>
       </header>
 
       <section className="relative mb-10 rounded-2xl suite-card p-6 sm:p-8">
+        <p className="mb-6 text-sm leading-relaxed text-muted">
+          Different Indian philosophical schools accept different sets of
+          pramāṇas. The examples here are illustrative rather than a universal
+          ranking of knowledge.
+        </p>
         <div className="mb-6">
           <button
             type="button"
@@ -244,7 +261,8 @@ export function PramanaExplorer() {
               />
             </div>
             <p className="mt-2 text-xs text-subtle">
-              How robustly the claim is grounded in valid means of knowledge
+              Epistemological strength is an analytical heuristic used by this
+              tool; it is not a standardized classical score.
             </p>
           </div>
 

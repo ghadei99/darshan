@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
@@ -12,6 +13,11 @@ import {
 } from "@/lib/yoga/types";
 
 const EXAMPLES = [
+  {
+    text: "I know I should study, but I keep getting distracted and putting it off.",
+    label: "Procrastination",
+    sub: "Study · Distraction",
+  },
   {
     text: "I am constantly worried about what my peers think of my work, and I can't stop comparing myself to them.",
     label: "Asmitā & Rāga",
@@ -101,6 +107,11 @@ export function YogaSutraAnalyzer() {
         </p>
         <p className="mt-2 font-mono text-xs text-subtle">
           चित्तवृत्ति · क्लेश · अभ्यास
+        </p>
+        <p className="mt-3 text-center text-sm">
+          <Link href="/archive" className="text-accent transition-colors hover:text-accent-strong">
+            Learn these terms → Archive
+          </Link>
         </p>
       </header>
 
@@ -238,9 +249,14 @@ export function YogaSutraAnalyzer() {
           </div>
 
           <div>
-            <h2 className="mb-4 font-serif text-xl text-accent-strong">
+            <h2 className="mb-2 font-serif text-xl text-accent-strong">
               Citta-Vṛttis
             </h2>
+            <p className="mb-4 text-sm leading-relaxed text-muted">
+              Here <em>pramāṇa</em> refers to a vṛtti — a mode of cognition
+              described in the Yoga Sūtras. This is different from the broader use
+              of pramāṇa as a means of valid knowledge in Indian epistemology.
+            </p>
             <div className="grid gap-4 md:grid-cols-2">
               {VRITTI_ORDER.map((id) => {
                 const meta = VRITTI_META[id];

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
@@ -11,6 +12,14 @@ import type {
 import { PURUSHARTHA_META, PURUSHARTHA_ORDER } from "@/lib/dharma/types";
 
 const EXAMPLES = [
+  {
+    dilemma:
+      "I have been offered a very lucrative job, but the role requires me to mislead customers.",
+    option_a: "Accept the lucrative job",
+    option_b: "Decline the job to avoid misleading customers",
+    label: "Integrity dilemma",
+    sub: "Career · Honesty",
+  },
   {
     dilemma:
       "Should I take a high-paying corporate job that drains my energy (Artha) or stay at a low-paying creative non-profit that aligns with my values (Dharma)?",
@@ -163,6 +172,11 @@ export function DharmaDilemmaSolver() {
         </p>
         <p className="mt-2 font-mono text-xs text-subtle">
           धर्म · अर्थ · काम · मोक्ष
+        </p>
+        <p className="mt-3 text-center text-sm">
+          <Link href="/archive" className="text-accent transition-colors hover:text-accent-strong">
+            Learn these terms → Archive
+          </Link>
         </p>
       </header>
 
@@ -387,9 +401,13 @@ export function DharmaDilemmaSolver() {
               </p>
             </div>
             <div className="dharma-solver__recommendation rounded-2xl suite-card p-6 ring-1 ring-accent/20">
-              <h3 className="mb-3 font-serif text-lg text-accent-strong">
-                Wise Recommendation
+              <h3 className="mb-2 font-serif text-lg text-accent-strong">
+                Reflective Guidance
               </h3>
+              <p className="mb-3 text-xs leading-relaxed text-subtle">
+                This is a structured reflection through the puruṣārthas, not a
+                single objectively correct ethical answer.
+              </p>
               <p className="text-sm leading-relaxed text-body">
                 {result.recommendation}
               </p>

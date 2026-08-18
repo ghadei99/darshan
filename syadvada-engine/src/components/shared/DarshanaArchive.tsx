@@ -59,8 +59,8 @@ export function DarshanaArchive() {
             </li>
             <li>
               <strong className="text-body">Syādvāda Engine</strong> — refer to
-              Anekāntavāda, Syādvāda, Saptabhaṅgī, and Syāt-asti / Syāt-nāsti
-              to understand each conditional perspective card.
+              Anekāntavāda (many-sidedness), Syādvāda (conditional predication),
+              and Saptabhaṅgī (the sevenfold scheme) as related but distinct ideas.
             </li>
             <li>
               <strong className="text-body">Other tools</strong> — Prāmāṇa,

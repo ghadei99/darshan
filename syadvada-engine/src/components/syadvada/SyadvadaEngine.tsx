@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
@@ -7,6 +8,13 @@ import type { AnalyzeResponse } from "@/lib/syadvada/types";
 
 import { PerspectiveGrid } from "./PerspectiveGrid";
 import { ViewToggle } from "./ViewToggle";
+
+const EXAMPLES = [
+  { text: "The pot exists.", label: "Existence claim" },
+  { text: "This object is permanent.", label: "Metaphysical claim" },
+  { text: "Technology is beneficial.", label: "Evaluative claim" },
+  { text: "An action can be considered good.", label: "Ethical claim" },
+];
 
 export function SyadvadaEngine() {
   const [statement, setStatement] = useState("");
@@ -17,6 +25,13 @@ export function SyadvadaEngine() {
     "classical",
   );
   const [copied, setCopied] = useState(false);
+  const [examplesOpen, setExamplesOpen] = useState(false);
+
+  function selectExample(text: string) {
+    setStatement(text);
+    setExamplesOpen(false);
+    setError(null);
+  }
 
   async function handleShatter() {
     const text = statement.trim();
@@ -80,20 +95,111 @@ export function SyadvadaEngine() {
     <div className="relative mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="relative mb-16 text-center">
         <p className="mb-3 font-mono text-xs tracking-[0.3em] text-accent/80 uppercase">
-          Saptabhaṅgī · Seven-fold Logic
+          Syādvāda · Saptabhaṅgī
         </p>
         <h1 className="text-4xl font-light tracking-tight text-heading sm:text-5xl">
           Syādvāda{" "}
           <span className="text-accent">Engine</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-base text-muted">
-          Shatter rigid absolutes through Jain conditional predication — seven
-          nuanced perspectives on any polarizing claim.
+          In the Jain philosophical framework, apply conditional predication
+          (Syādvāda) through the sevenfold Saptabhaṅgī — qualifying claims from
+          particular standpoints rather than treating them as absolute.
+        </p>
+        <p className="mt-3 text-center text-sm">
+          <Link href="/archive" className="text-accent transition-colors hover:text-accent-strong">
+            Learn these terms → Archive
+          </Link>
         </p>
       </header>
 
+      <section className="relative mb-10 rounded-2xl suite-card p-6 sm:p-8">
+        <h2 className="mb-4 font-serif text-lg text-accent-strong">
+          Three related ideas
+        </h2>
+        <p className="mb-4 text-xs text-subtle">
+          In Jain thought these are related but not identical; scholarly
+          interpretations may vary.
+        </p>
+        <div className="space-y-4 text-sm leading-relaxed text-body">
+          <div>
+            <p className="font-serif font-medium text-heading">Anekāntavāda</p>
+            <p className="mt-1 text-muted">
+              Many-sidedness: reality cannot be exhausted by a single, absolute
+              description.
+            </p>
+          </div>
+          <p className="text-center font-mono text-subtle" aria-hidden>
+            ↓
+          </p>
+          <div>
+            <p className="font-serif font-medium text-heading">Syādvāda</p>
+            <p className="mt-1 text-muted">
+              Conditional predication: a claim is qualified by the standpoint from
+              which it is made (<em>syāt</em> — in some respect).
+            </p>
+          </div>
+          <p className="text-center font-mono text-subtle" aria-hidden>
+            ↓
+          </p>
+          <div>
+            <p className="font-serif font-medium text-heading">Saptabhaṅgī</p>
+            <p className="mt-1 text-muted">
+              The sevenfold scheme through which conditional predication is
+              expressed.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="relative mb-12">
         <div className="rounded-3xl suite-card p-6 sm:p-8">
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={() => setExamplesOpen((o) => !o)}
+              className="flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-left transition-colors hover:border-border-hover"
+              aria-expanded={examplesOpen}
+            >
+              <span className="font-serif text-sm text-accent-strong">
+                Starter Examples
+              </span>
+              <svg
+                className={`h-4 w-4 text-muted transition-transform ${examplesOpen ? "rotate-180" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {examplesOpen && (
+              <div className="mt-3 space-y-2">
+                {EXAMPLES.map((ex) => (
+                  <button
+                    key={ex.text}
+                    type="button"
+                    onClick={() => selectExample(ex.text)}
+                    className="group w-full rounded-xl border border-border bg-input px-4 py-3 text-left transition-all hover:border-accent/30 hover:bg-accent-muted/30"
+                  >
+                    <span className="badge-accent mb-1 inline-block rounded px-2 py-0.5 font-mono text-xs font-medium">
+                      {ex.label}
+                    </span>
+                    <p className="text-sm leading-relaxed text-body group-hover:text-heading">
+                      {ex.text}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <label htmlFor="statement" className="sr-only">
             Statement to analyze
           </label>
@@ -180,7 +286,7 @@ export function SyadvadaEngine() {
       )}
 
       <footer className="mt-20 text-center text-xs text-subtle">
-        Conditional truth · Anekāntavāda · No single perspective exhausts reality
+        Anekāntavāda · Syādvāda · Saptabhaṅgī — no single perspective exhausts reality
       </footer>
     </div>
   );
