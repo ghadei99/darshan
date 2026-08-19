@@ -1,7 +1,7 @@
 /** Shared analyzer metadata returned by all domain API routes. */
-export type AnalyzerMode = "gemini" | "openrouter" | "heuristic";
+export type AnalyzerMode = "gemini" | "openrouter" | "groq" | "heuristic";
 
-export type AIProvider = "gemini" | "openrouter";
+export type AIProvider = "gemini" | "openrouter" | "groq";
 
 export type FallbackReason =
   | "missing_key"
@@ -16,10 +16,13 @@ export type FallbackReason =
   | "network_error"
   | "invalid_response"
   | "unknown_gemini_error"
-  | "unknown_openrouter_error";
+  | "unknown_openrouter_error"
+  | "unknown_groq_error";
 
 export interface AnalyzerMeta {
   analyzer: AnalyzerMode;
   /** Present only when analyzer is "heuristic" — safe for client display. */
   fallbackReason?: FallbackReason;
+  /** Successful Groq model id when analyzer is "groq"; omitted otherwise. */
+  model?: string;
 }

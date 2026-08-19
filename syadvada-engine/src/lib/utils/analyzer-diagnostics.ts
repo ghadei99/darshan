@@ -16,6 +16,7 @@ const FALLBACK_MESSAGES: Record<FallbackReason, string> = {
   invalid_response: "Heuristic fallback active: AI provider returned an invalid response.",
   unknown_gemini_error: "Heuristic fallback active: Gemini unavailable.",
   unknown_openrouter_error: "Heuristic fallback active: OpenRouter unavailable.",
+  unknown_groq_error: "Heuristic fallback active: Groq unavailable.",
 };
 
 /** Log an accurate client-side diagnostic when heuristic fallback was used. */

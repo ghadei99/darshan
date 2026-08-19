@@ -3,11 +3,13 @@ import { describe, it, afterEach } from "node:test";
 
 import type { AnalyzerMeta } from "../types";
 import { GeminiServiceError } from "../gemini/errors";
+import { GroqServiceError } from "../groq/errors";
 import { OpenRouterServiceError } from "../openrouter/errors";
 import { withGeminiFallback } from "./with-gemini-fallback";
 
 const originalGeminiKey = process.env.GEMINI_API_KEY;
 const originalOpenRouterKey = process.env.OPENROUTER_API_KEY;
+const originalGroqKey = process.env.GROQ_API_KEY;
 const originalProvider = process.env.AI_PROVIDER;
 
 type TestResult = AnalyzerMeta & { value: string };
@@ -23,6 +25,11 @@ describe("withGeminiFallback", () => {
       delete process.env.OPENROUTER_API_KEY;
     } else {
       process.env.OPENROUTER_API_KEY = originalOpenRouterKey;
+    }
+    if (originalGroqKey === undefined) {
+      delete process.env.GROQ_API_KEY;
+    } else {
+      process.env.GROQ_API_KEY = originalGroqKey;
     }
     if (originalProvider === undefined) {
       delete process.env.AI_PROVIDER;
@@ -147,6 +154,54 @@ describe("withGeminiFallback", () => {
           httpStatus: 429,
           message: "Rate limit exceeded",
           reachedOpenRouter: true,
+        });
+      },
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "heuristic");
+    assert.equal(result.fallbackReason, "rate_limited");
+    assert.equal(result.value, "local");
+  });
+
+  it("uses groq analyzer mode when AI_PROVIDER=groq succeeds", async () => {
+    process.env.AI_PROVIDER = "groq";
+    process.env.GROQ_API_KEY = "gsk_test_key_abcdefghij";
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => ({ analyzer: "groq", value: "groq" }),
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "groq");
+    assert.equal(result.value, "groq");
+    assert.equal(result.fallbackReason, undefined);
+  });
+
+  it("falls back with missing_key when groq key is unset", async () => {
+    process.env.AI_PROVIDER = "groq";
+    delete process.env.GROQ_API_KEY;
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => ({ analyzer: "groq", value: "groq" }),
+      () => ({ analyzer: "heuristic", value: "local" }),
+    );
+
+    assert.equal(result.analyzer, "heuristic");
+    assert.equal(result.fallbackReason, "missing_key");
+    assert.equal(result.value, "local");
+  });
+
+  it("falls back when groqFn throws after all models fail", async () => {
+    process.env.AI_PROVIDER = "groq";
+    process.env.GROQ_API_KEY = "gsk_test_key_abcdefghij";
+
+    const result = await withGeminiFallback<TestResult>(
+      async () => {
+        throw new GroqServiceError("rate_limited", "Rate limit exceeded", {
+          httpStatus: 429,
+          message: "Rate limit exceeded",
+          reachedGroq: true,
         });
       },
       () => ({ analyzer: "heuristic", value: "local" }),

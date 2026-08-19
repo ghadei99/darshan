@@ -3,9 +3,12 @@ import {
   getActiveAnalyzerMode,
   getGeminiApiKey,
   getGeminiModel,
+  getGroqApiKey,
+  getGroqModels,
   getOpenRouterApiKey,
   getOpenRouterModel,
   isLikelyValidGeminiKey,
+  isLikelyValidGroqKey,
   isLikelyValidOpenRouterKey,
 } from "@/lib/config/env";
 
@@ -15,6 +18,13 @@ import {
   extractGeminiErrorDetails,
   logGeminiFailure,
 } from "../gemini/errors";
+import { getLastSucceededGroqModel } from "../groq/impl";
+import {
+  GroqServiceError,
+  classifyGroqError,
+  extractGroqErrorDetails,
+  logGroqFailure,
+} from "../groq/errors";
 import {
   OpenRouterServiceError,
   classifyOpenRouterError,
@@ -30,28 +40,47 @@ function logServerFallback(
   const provider = getAIProvider();
 
   if (reason === "missing_key" || reason === "invalid_key_format") {
-    const message =
-      provider === "openrouter"
-        ? reason === "missing_key"
-          ? "OPENROUTER_API_KEY is not configured"
-          : "OPENROUTER_API_KEY appears malformed"
-        : reason === "missing_key"
-          ? "GEMINI_API_KEY is not configured"
-          : "GEMINI_API_KEY appears malformed";
-
     if (provider === "openrouter") {
       logOpenRouterFailure({
         category: reason,
         model: getOpenRouterModel(),
-        details: { message, reachedOpenRouter: false },
+        details: {
+          message:
+            reason === "missing_key"
+              ? "OPENROUTER_API_KEY is not configured"
+              : "OPENROUTER_API_KEY appears malformed",
+          reachedOpenRouter: false,
+        },
       });
-    } else {
-      logGeminiFailure({
-        category: reason,
-        model: getGeminiModel(),
-        details: { message, reachedGemini: false },
-      });
+      return;
     }
+
+    if (provider === "groq") {
+      logGroqFailure({
+        category: reason,
+        model: getGroqModels()[0] ?? "unconfigured",
+        details: {
+          message:
+            reason === "missing_key"
+              ? "GROQ_API_KEY is not configured"
+              : "GROQ_API_KEY appears malformed",
+          reachedGroq: false,
+        },
+      });
+      return;
+    }
+
+    logGeminiFailure({
+      category: reason,
+      model: getGeminiModel(),
+      details: {
+        message:
+          reason === "missing_key"
+            ? "GEMINI_API_KEY is not configured"
+            : "GEMINI_API_KEY appears malformed",
+        reachedGemini: false,
+      },
+    });
     return;
   }
 
@@ -63,6 +92,19 @@ function logServerFallback(
       details: {
         ...details,
         reachedOpenRouter: details.reachedOpenRouter || true,
+      },
+    });
+    return;
+  }
+
+  if (provider === "groq") {
+    const details = extractGroqErrorDetails(error);
+    logGroqFailure({
+      category: reason,
+      model: details.model ?? getGroqModels()[0] ?? "unconfigured",
+      details: {
+        ...details,
+        reachedGroq: details.reachedGroq || true,
       },
     });
     return;
@@ -80,9 +122,16 @@ function logServerFallback(
 }
 
 function classifyProviderError(error: unknown): FallbackReason {
-  if (getAIProvider() === "openrouter") {
+  const provider = getAIProvider();
+
+  if (provider === "openrouter") {
     if (error instanceof OpenRouterServiceError) return error.reason;
     return classifyOpenRouterError(error);
+  }
+
+  if (provider === "groq") {
+    if (error instanceof GroqServiceError) return error.reason;
+    return classifyGroqError(error);
   }
 
   if (error instanceof GeminiServiceError) return error.reason;
@@ -90,15 +139,17 @@ function classifyProviderError(error: unknown): FallbackReason {
 }
 
 function getConfiguredApiKey(): string | undefined {
-  return getAIProvider() === "openrouter"
-    ? getOpenRouterApiKey()
-    : getGeminiApiKey();
+  const provider = getAIProvider();
+  if (provider === "openrouter") return getOpenRouterApiKey();
+  if (provider === "groq") return getGroqApiKey();
+  return getGeminiApiKey();
 }
 
 function isLikelyValidApiKey(key: string): boolean {
-  return getAIProvider() === "openrouter"
-    ? isLikelyValidOpenRouterKey(key)
-    : isLikelyValidGeminiKey(key);
+  const provider = getAIProvider();
+  if (provider === "openrouter") return isLikelyValidOpenRouterKey(key);
+  if (provider === "groq") return isLikelyValidGroqKey(key);
+  return isLikelyValidGeminiKey(key);
 }
 
 /**
@@ -134,7 +185,11 @@ export async function withGeminiFallback<T extends AnalyzerMeta>(
 
   try {
     const result = await aiFn();
-    return { ...result, analyzer: activeMode };
+    const groqModel =
+      getAIProvider() === "groq" ? getLastSucceededGroqModel() : undefined;
+    return groqModel
+      ? { ...result, analyzer: activeMode, model: groqModel }
+      : { ...result, analyzer: activeMode };
   } catch (error) {
     const reason = classifyProviderError(error);
     logServerFallback(reason, error);
