@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { ARCHIVE_TERMS, TOOL_TAGS, type ToolTag } from "@/lib/archive/terms";
+import { DiacriticsNote } from "./DiacriticsNote";
 
 export function DarshanaArchive() {
   const [query, setQuery] = useState("");
@@ -69,8 +70,17 @@ export function DarshanaArchive() {
               respectively.
             </li>
           </ul>
+          <p className="border-t border-accent/15 pt-3 text-xs text-subtle">
+            Each definition below is a working gloss, not the complete
+            meaning. A single English phrase never fully captures a Sanskrit
+            philosophical term, and different schools — Nyāya, Sāṅkhya-Yoga,
+            Mīmāṃsā, Vedānta, Jain, and others — often use the same word with
+            real differences in scope.
+          </p>
         </div>
       </section>
+
+      <DiacriticsNote />
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">

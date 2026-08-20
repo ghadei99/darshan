@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { NYAYA_HILL_FIRE_CANONICAL } from "@/lib/archive/terms";
+import { ResultProvenance } from "@/components/shared/ResultProvenance";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { NyayaAnalyzeResponse } from "@/lib/nyaya/types";
 
@@ -263,6 +264,8 @@ export function NyayaLogic() {
               </ul>
             </div>
           )}
+
+          <ResultProvenance analyzer={result.analyzer} model={result.model} />
         </section>
       )}
 

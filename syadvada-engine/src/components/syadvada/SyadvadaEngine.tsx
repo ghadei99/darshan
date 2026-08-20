@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { ResultProvenance } from "@/components/shared/ResultProvenance";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { AnalyzeResponse } from "@/lib/syadvada/types";
 
@@ -282,6 +283,8 @@ export function SyadvadaEngine() {
           </blockquote>
 
           <PerspectiveGrid perspectives={result.perspectives} viewMode={viewMode} />
+
+          <ResultProvenance analyzer={result.analyzer} model={result.model} />
         </section>
       )}
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { ResultProvenance } from "@/components/shared/ResultProvenance";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { YogaAnalyzeResponse } from "@/lib/yoga/types";
 import {
@@ -396,6 +397,8 @@ export function YogaSutraAnalyzer() {
               </p>
             </div>
           </div>
+
+          <ResultProvenance analyzer={result.analyzer} model={result.model} />
         </section>
       )}
 

@@ -7,14 +7,22 @@ import { useCallback, useEffect, useState } from "react";
 import { DarshanaIcon } from "./DarshanaIcon";
 import { ThemeToggle } from "./ThemeToggle";
 
+/**
+ * Conceptual order, not alphabetical: reasoning (Nyāya) and knowledge-sources
+ * (Pramāṇa) come first so a beginner meets the tools for examining claims
+ * before anything else; Yoga and Dharma apply that lens to mind and action;
+ * Debate stages reasoning between competing schools; Syādvāda comes last
+ * because "two views can both hold from different standpoints" lands better
+ * once a visitor has already seen reasoning, evidence, and live disagreement.
+ */
 const links = [
   { href: "/", label: "Home", key: "home" },
   { href: "/nyaya", label: "Nyāya-Logic", key: "nyaya" },
-  { href: "/syadvada", label: "Syādvāda Engine", key: "syadvada" },
   { href: "/pramana", label: "Prāmāṇa Explorer", key: "pramana" },
-  { href: "/debate", label: "Vāda-Katha", key: "debate" },
   { href: "/yoga-analyzer", label: "Yoga-Sūtra", key: "yoga" },
   { href: "/dharma", label: "Dharma", key: "dharma" },
+  { href: "/debate", label: "Vāda-Katha", key: "debate" },
+  { href: "/syadvada", label: "Syādvāda Engine", key: "syadvada" },
   { href: "/archive", label: "Archive", key: "archive" },
 ];
 

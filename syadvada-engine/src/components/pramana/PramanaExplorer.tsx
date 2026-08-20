@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { UPAMANA_GAVAYA_EXAMPLE } from "@/lib/archive/terms";
+import { ResultProvenance } from "@/components/shared/ResultProvenance";
 import { warnIfHeuristicFallback } from "@/lib/utils/analyzer-diagnostics";
 import type { PramanaAnalyzeResponse, PramanaId } from "@/lib/pramana/types";
 import { PRAMANA_META } from "@/lib/pramana/types";
@@ -324,6 +325,8 @@ export function PramanaExplorer() {
               {result.philosophical_critique}
             </p>
           </div>
+
+          <ResultProvenance analyzer={result.analyzer} model={result.model} />
         </section>
       )}
 

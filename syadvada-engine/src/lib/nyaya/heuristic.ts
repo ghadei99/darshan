@@ -23,7 +23,21 @@ const FALLACY_PATTERNS: Array<[RegExp, string]> = [
     /\b(correlation|linked to|associated with).{0,40}(therefore|so|proves)\b/i,
     "post hoc / false cause (kālātīta)",
   ],
+  [
+    /\bbecause (i (dreamt|dreamed|felt|guessed|imagine|imagined|wish|hope)|my gut says|it just feels right)\b/i,
+    "asiddha (unestablished hetu) — grounded in a feeling, dream, or guess rather than an observed or inferable mark",
+  ],
 ];
+
+/**
+ * Fallacy names marking the hetu itself as non-existent or vacuous — a real
+ * hetvābhāsa, not a stylistic flaw. A hetu that only asserts the conclusion
+ * (siddhasādhanā) or was never actually observed/inferred (asiddha) does not
+ * establish anything, so no amount of otherwise-sound structure rescues the
+ * inference. These force "invalid" outright rather than feeding the fallacy
+ * count threshold below.
+ */
+const HETU_DISQUALIFYING_MARKERS = ["siddhasādhanā", "asiddha"];
 
 const SENTENCE_SPLIT = /(?<=[.!?])\s+|\n+/;
 const BECAUSE_SPLIT = /\b(?:because|since|given that)\b/i;
@@ -44,26 +58,39 @@ function detectFallacies(text: string): string[] {
   if (!sentences(text).length) {
     found.push("empty or incoherent argument (śabda-doṣa)");
   }
-  if (sentences(text).length === 1 && text.length < 40) {
+  // A short single sentence is only "underdeveloped" if it has no reason clause
+  // at all. "The hill has fire because it has smoke." is 39 characters and one
+  // sentence, but it states a thesis and a hetu — that is a complete (if terse)
+  // classical inference, not an insufficient one. Length alone is not a defect.
+  if (sentences(text).length === 1 && text.length < 40 && !BECAUSE_SPLIT.test(text)) {
     found.push("underdeveloped syllogism — insufficient avayavas (members)");
   }
   return [...new Set(found)];
 }
 
 function rateValidity(fallacies: string[], steps: NyayaSteps): string {
-  const missing = [
-    steps.pratijna,
-    steps.hetu,
-    steps.udaharana,
-    steps.upanaya,
-    steps.nigamana,
-  ].filter(
+  const disqualifyingHetu = fallacies.some((fallacy) =>
+    HETU_DISQUALIFYING_MARKERS.some((marker) => fallacy.includes(marker)),
+  );
+  if (disqualifyingHetu) return "invalid";
+
+  /**
+   * Only pratijñā and hetu must come from the challenger's own text. Udāharaṇa
+   * and upanaya are the reasoner's job to supply when implicit — reconstructing
+   * an unstated universal generalization and its application to the case at
+   * hand is what pañcāvayava reconstruction IS, not evidence the underlying
+   * inference is defective. Counting them as "missing" here previously meant
+   * a textbook-sound one-line argument like "the hill has fire because it has
+   * smoke" was marked "partially valid" purely for lacking a spelled-out
+   * "like a kitchen" clause, even though the smoke–fire vyāpti needs no such
+   * clause to hold.
+   */
+  const coreMissing = [steps.pratijna, steps.hetu].filter(
     (v) => v.startsWith("[Implicit") || v.startsWith("[Not clearly"),
   ).length;
 
   if (fallacies.length >= 3) return "invalid";
-  if (fallacies.length >= 1 || missing >= 3) return "partially valid";
-  if (missing >= 1) return "partially valid";
+  if (fallacies.length >= 1 || coreMissing >= 1) return "partially valid";
   return "valid";
 }
 

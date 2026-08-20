@@ -1,6 +1,10 @@
 import Link from "next/link";
 
+import { AuthorityAwareness } from "./AuthorityAwareness";
 import { DarshanaIcon } from "./DarshanaIcon";
+import { DiacriticsNote } from "./DiacriticsNote";
+import { HowToUse } from "./HowToUse";
+import { WhyUseThis } from "./WhyUseThis";
 
 const modules = [
   {
@@ -13,15 +17,6 @@ const modules = [
     accentClass: "module-accent--warm",
   },
   {
-    href: "/syadvada",
-    title: "Syādvāda Engine",
-    subtitle: "Anekāntavāda · Syādvāda · Saptabhaṅgī",
-    description:
-      "In the Jain philosophical framework, explore conditional predication (Syādvāda) and its sevenfold scheme (Saptabhaṅgī) — grounded in many-sidedness (Anekāntavāda).",
-    sanskrit: "अनेकान्तवाद · स्याद्वाद · सप्तभङ्गी",
-    accentClass: "module-accent--cool",
-  },
-  {
     href: "/pramana",
     title: "Prāmāṇa Explorer",
     subtitle: "pramāṇa · means of valid knowledge",
@@ -29,15 +24,6 @@ const modules = [
       "Identify how claims ground their truth — through perception, inference, comparison, or testimony — and assess epistemological strength.",
     sanskrit: "प्रत्यक्ष · अनुमान · उपमान · शब्द",
     accentClass: "module-accent--warm",
-  },
-  {
-    href: "/debate",
-    title: "Vāda-Katha",
-    subtitle: "vāda · classical debate arena",
-    description:
-      "Enter the philosophical arena — debate Cārvāka, Advaita, Nyāya, or Mādhyamika opponents in rigorous classical Indian disputation.",
-    sanskrit: "परिषद् · वितर्क · निग्रहस्थान",
-    accentClass: "module-accent--cool",
   },
   {
     href: "/yoga-analyzer",
@@ -56,6 +42,24 @@ const modules = [
       "Resolve ethical crossroads through Dharma, Artha, Kāma, and Mokṣa — with a side-by-side comparison matrix and wise synthesis.",
     sanskrit: "धर्म · अर्थ · काम · मोक्ष",
     accentClass: "module-accent--warm",
+  },
+  {
+    href: "/debate",
+    title: "Vāda-Katha",
+    subtitle: "vāda · classical debate arena",
+    description:
+      "Enter the philosophical arena — debate Cārvāka, Advaita, Nyāya, or Mādhyamika opponents in rigorous classical Indian disputation.",
+    sanskrit: "परिषद् · वितर्क · निग्रहस्थान",
+    accentClass: "module-accent--cool",
+  },
+  {
+    href: "/syadvada",
+    title: "Syādvāda Engine",
+    subtitle: "Anekāntavāda · Syādvāda · Saptabhaṅgī",
+    description:
+      "In the Jain philosophical framework, explore conditional predication (Syādvāda) and its sevenfold scheme (Saptabhaṅgī) — grounded in many-sidedness (Anekāntavāda).",
+    sanskrit: "अनेकान्तवाद · स्याद्वाद · सप्तभङ्गी",
+    accentClass: "module-accent--cool",
   },
 ];
 
@@ -125,7 +129,14 @@ export function LandingPage() {
         ))}
       </div>
 
-      <footer className="mt-24 text-center text-xs text-subtle">
+      <div className="mt-24">
+        <HowToUse />
+        <WhyUseThis />
+        <AuthorityAwareness />
+        <DiacriticsNote />
+      </div>
+
+      <footer className="text-center text-xs text-subtle">
         Multiple valid standpoints · No single perspective exhausts reality
       </footer>
     </div>
